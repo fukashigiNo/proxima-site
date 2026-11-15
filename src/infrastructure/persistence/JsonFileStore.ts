@@ -1,6 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 
 /**
@@ -25,7 +26,12 @@ export class JsonFileStore<T> {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
       this.seeding ??= (async () => {
         const initial = this.seed();
-        await this.write(initial);
+        try {
+          await this.write(initial);
+        } catch (writeError) {
+          // Файловая система только для чтения: отдаём исходные данные, чтобы сайт продолжал работать
+          console.warn(`[JsonFileStore] не удалось сохранить ${this.filePath}:`, (writeError as Error).message);
+        }
         return initial;
       })().finally(() => {
         this.seeding = null;
@@ -53,4 +59,10 @@ export class JsonFileStore<T> {
   }
 }
 
-export const dataPath = (file: string) => path.join(process.env.DATA_DIR ?? path.join(process.cwd(), "data"), file);
+/**
+ * Каталог данных: DATA_DIR, иначе ./data. На Vercel папка проекта только для чтения,
+ * поэтому там используется временный каталог — данные живут, пока жив инстанс функции.
+ */
+const dataDir = () => process.env.DATA_DIR ?? (process.env.VERCEL ? path.join(tmpdir(), "proxima-data") : path.join(process.cwd(), "data"));
+
+export const dataPath = (file: string) => path.join(dataDir(), file);
