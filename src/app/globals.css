@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+/* ── Дизайн-токены. Тема переключается заменой переменных, утилиты Tailwind ссылаются на них. */
+:root {
+  color-scheme: light;
+  --bg: #f4f4f1;
+  --surface: #ebebe7;
+  --ink: #0d0d0d;
+  --muted: #6b6b68;
+  --line: #deded9;
+  --line-strong: #c4c4be;
+  --accent: #ff4f1f;
+  --danger: #d92d20;
+  --success: #12805c;
+  --warning: #f5a524;
+  --warning-ink: #a15c00;
+  --on-accent: #ffffff;
+  --inverse-muted: #a3a3a0;
+  --inverse-line: #2e2e2e;
+  --shadow: rgba(0, 0, 0, 0.25);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f0f10;
+  --surface: #18181b;
+  --ink: #f2f2ee;
+  --muted: #8f8f8a;
+  --line: #27272b;
+  --line-strong: #3b3b40;
+  --accent: #ff5a2c;
+  --danger: #ff5a4f;
+  --success: #3ccf91;
+  --warning: #f5b84a;
+  --warning-ink: #f5b84a;
+  --inverse-muted: #5c5c58;
+  --inverse-line: #d6d6d0;
+  --shadow: rgba(0, 0, 0, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f0f10;
+    --surface: #18181b;
+    --ink: #f2f2ee;
+    --muted: #8f8f8a;
+    --line: #27272b;
+    --line-strong: #3b3b40;
+    --accent: #ff5a2c;
+    --danger: #ff5a4f;
+    --success: #3ccf91;
+    --warning: #f5b84a;
+    --warning-ink: #f5b84a;
+    --inverse-muted: #5c5c58;
+    --inverse-line: #d6d6d0;
+    --shadow: rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* ── Тема Tailwind: bg-bg, text-ink, border-line, rounded-panel, font-mono… */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-warning-ink: var(--warning-ink);
+  --color-on-accent: var(--on-accent);
+  --color-inverse-muted: var(--inverse-muted);
+  --color-inverse-line: var(--inverse-line);
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+
+  --radius-card: 14px;
+  --radius-panel: 22px;
+
+  --shadow-float: 0 20px 60px -30px var(--shadow);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply overflow-x-hidden bg-bg font-sans text-base leading-[1.4] text-ink antialiased;
+  }
+  ::selection {
+    @apply bg-accent text-on-accent;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-3 outline-accent;
+  }
+  /* WebGL-холст никогда не должен распирать сетку */
+  canvas {
+    @apply block max-w-full;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/*
+ * Плавная смена темы включается только на время переключения (класс ставит ThemeToggle).
+ * Постоянный transition на body и большие radial-gradient заметно удорожали первый кадр
+ * на устройствах без аппаратной графики (Lighthouse/PageSpeed).
+ */
+.theme-transition,
+.theme-transition * {
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    border-color 0.3s !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
