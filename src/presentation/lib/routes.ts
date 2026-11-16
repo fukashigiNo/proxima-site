@@ -6,7 +6,6 @@ const partsParam = (selection: BuildSelection) =>
     .map((c) => c.id)
     .join(",");
 
-/** Ссылка на страницу заявки с приложенной конфигурацией. */
 export function orderHref(selection: BuildSelection, title?: string | null) {
   const params = new URLSearchParams();
   const parts = partsParam(selection);
@@ -16,7 +15,6 @@ export function orderHref(selection: BuildSelection, title?: string | null) {
   return query ? `/order?${query}` : "/order";
 }
 
-/** Ссылка в конструктор: готовая сборка, произвольный набор деталей и/или открытая категория. */
 export function builderHref({
   preset,
   selection,
@@ -35,7 +33,6 @@ export function builderHref({
   return query ? `/builder?${query}` : "/builder";
 }
 
-/** Разбор общих query-параметров страниц сайта. */
 export const parseParts = (raw?: string) => (raw ? raw.split(",").map((s) => s.trim()).filter(Boolean) : []);
 
 export const parseCategory = (raw?: string): ComponentCategory | undefined =>

@@ -2,11 +2,6 @@
 
 import { useSyncExternalStore } from "react";
 
-/**
- * Глобальный флаг «пользователь начал взаимодействовать со страницей».
- * Тяжёлая инициализация (WebGL, компиляция шейдеров) откладывается до первого действия,
- * чтобы не блокировать основной поток во время загрузки — страница интерактивна сразу.
- */
 const EVENTS = ["pointermove", "pointerdown", "touchstart", "wheel", "scroll", "keydown"] as const;
 
 let activated = false;
