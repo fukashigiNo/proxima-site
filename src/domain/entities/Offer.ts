@@ -1,6 +1,5 @@
 import { CITIES, type City, type PcComponent } from "./PcComponent";
 
-/** Коммерческие параметры позиции, которые меняет администратор. */
 export interface OfferPatch {
   readonly price: number;
   readonly stock: Readonly<Record<City, number>>;
@@ -9,7 +8,6 @@ export interface OfferPatch {
 export const MAX_PRICE = 50_000_000;
 export const MAX_STOCK = 9_999;
 
-/** Валидация правки цены и остатков; возвращает ошибки по полям. */
 export const validateOfferPatch = (patch: OfferPatch): Record<string, string> => {
   const errors: Record<string, string> = {};
   if (!Number.isInteger(patch.price) || patch.price <= 0 || patch.price > MAX_PRICE)

@@ -2,7 +2,6 @@ import { DomainError, ValidationError } from "@/domain/entities/BuildRequest";
 import { applyOfferPatch, validateOfferPatch, type OfferPatch } from "@/domain/entities/Offer";
 import type { ComponentRepository } from "@/domain/repositories/ComponentRepository";
 
-/** Изменение цены и остатков позиции каталога. */
 export class UpdateOffer {
   constructor(private readonly components: ComponentRepository) {}
 

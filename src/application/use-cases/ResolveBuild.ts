@@ -1,7 +1,6 @@
 import { selectComponent, type BuildSelection } from "@/domain/entities/Build";
 import type { ComponentRepository } from "@/domain/repositories/ComponentRepository";
 
-/** Восстанавливает конфигурацию по списку id (например, из адреса страницы). Неизвестные id отбрасываются. */
 export class ResolveBuild {
   static readonly MAX_PARTS = 16;
 

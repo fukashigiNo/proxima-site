@@ -3,12 +3,10 @@ import { totalStock, type PcComponent } from "@/domain/entities/PcComponent";
 import type { ComponentRepository } from "@/domain/repositories/ComponentRepository";
 import type { ListBuildRequests, BuildRequestView } from "./ListBuildRequests";
 
-/** Позиция считается заканчивающейся, если суммарный остаток по городам ниже порога. */
 export const LOW_STOCK_THRESHOLD = 3;
 
 export interface Dashboard {
   readonly byStatus: Record<RequestStatus, number>;
-  /** Сумма заявок с приложенной конфигурацией, по статусам (по текущим ценам каталога) */
   readonly totalByStatus: Record<RequestStatus, number>;
   readonly recent: BuildRequestView[];
   readonly lowStock: PcComponent[];

@@ -1,6 +1,5 @@
 import type { ComponentCategory, ComponentOf, PcComponent } from "./PcComponent";
 
-/** Сборка — неизменяемый набор выбранных комплектующих; тип каждой ячейки сужен по категории. */
 export type BuildSelection = { readonly [C in ComponentCategory]?: ComponentOf<C> };
 
 export interface PresetBuild {
@@ -11,7 +10,6 @@ export interface PresetBuild {
   readonly componentIds: readonly string[];
 }
 
-/** Валидация текстовых полей готовой сборки. */
 export function validatePresetFields(p: Pick<PresetBuild, "title" | "tagline" | "purpose">): Record<string, string> {
   const errors: Record<string, string> = {};
   if (!p.title?.trim() || p.title.length > 40) errors.title = "Название обязательно, до 40 символов";

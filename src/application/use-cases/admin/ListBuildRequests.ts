@@ -10,7 +10,6 @@ export interface BuildRequestView extends BuildRequest {
   readonly summary: BuildSummary | null;
 }
 
-/** Заявки для админки: новые сверху, с развёрнутыми комплектующими и оценкой сборки. */
 export class ListBuildRequests {
   constructor(
     private readonly requests: BuildRequestRepository,

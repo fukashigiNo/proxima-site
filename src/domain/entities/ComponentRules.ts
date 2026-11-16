@@ -27,10 +27,6 @@ const text = (errors: Errors, key: string, value: unknown, label: string, max = 
   else if (value.length > max) errors[key] = `Не длиннее ${max} символов`;
 };
 
-/**
- * Доменная валидация комплектующего целиком: общие поля и параметры категории,
- * от которых зависят правила совместимости и 3D-модель.
- */
 export function validateComponent(c: PcComponent): Errors {
   const errors: Errors = {};
   if (!oneOf(c.category, COMPONENT_CATEGORIES)) return { category: "Неизвестная категория" };
@@ -92,7 +88,6 @@ export function validateComponent(c: PcComponent): Errors {
   return errors;
 }
 
-/** Человекочитаемый id: «gpu-geforce-rtx-5070», с суффиксом при совпадении. */
 export function makeComponentId(category: string, name: string, taken: ReadonlySet<string>): string {
   const translit: Record<string, string> = {
     а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z", и: "i", й: "y", к: "k", л: "l", м: "m",

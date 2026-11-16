@@ -4,7 +4,6 @@ import type { PcComponent } from "@/domain/entities/PcComponent";
 import type { ComponentRepository } from "@/domain/repositories/ComponentRepository";
 import type { PresetRepository } from "@/domain/repositories/PresetRepository";
 
-/** Данные новой позиции: всё, кроме id — его генерирует система. */
 export type NewComponent = PcComponent extends infer C ? (C extends PcComponent ? Omit<C, "id"> : never) : never;
 
 export class CreateComponent {
@@ -26,7 +25,6 @@ export class UpdateComponent {
   async execute(component: PcComponent): Promise<PcComponent> {
     const [existing] = await this.components.findByIds([component.id]);
     if (!existing) throw new DomainError("Позиция не найдена");
-    // Категория определяет структуру данных и связи со сборками — её не меняем
     if (existing.category !== component.category) throw new DomainError("Категорию позиции изменить нельзя");
     const errors = validateComponent(component);
     if (Object.keys(errors).length > 0) throw new ValidationError(errors);

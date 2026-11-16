@@ -19,13 +19,13 @@ export class SubmitBuildRequest {
     const errors = validateBuildRequest(input);
     if (Object.keys(errors).length > 0) throw new ValidationError(errors);
 
-    // Не доверяем клиенту: оставляем только реально существующие комплектующие
     const known = await this.components.findByIds(input.componentIds ?? []);
 
     const request: BuildRequest = {
       id: this.generateId(),
       createdAt: this.now().toISOString(),
       status: "new",
+      channel: "site",
       name: input.name!.trim(),
       contact: input.contact!.trim(),
       budget: input.budget,

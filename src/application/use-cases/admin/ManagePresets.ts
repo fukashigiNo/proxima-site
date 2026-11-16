@@ -8,10 +8,6 @@ import { evaluateBuild } from "../EvaluateBuild";
 
 export type PresetInput = Omit<PresetBuild, "id"> & { id?: string };
 
-/**
- * Создание и изменение готовой сборки. Сборка публикуется на сайте, поэтому она должна быть
- * полной (по одной позиции каждой категории) и без ошибок совместимости.
- */
 export class SavePreset {
   constructor(
     private readonly presets: PresetRepository,
@@ -35,7 +31,6 @@ export class SavePreset {
     if (id) {
       if (!(await this.presets.findById(id))) throw new DomainError("Сборка не найдена");
     } else {
-      // Генератор id добавляет префикс категории — сравниваем в том же виде
       const taken = new Set((await this.presets.findAll()).map((p) => `preset-${p.id}`));
       id = makeComponentId("preset", input.title, taken).replace(/^preset-/, "");
     }
