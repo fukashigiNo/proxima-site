@@ -6,6 +6,7 @@ import { parseCategory, parseParts } from "@/presentation/lib/routes";
 import { BuildProvider } from "@/presentation/state/BuildContext";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/builder" },
   title: "Конструктор ПК — Proxima Computers",
   description: "Соберите компьютер из комплектующих в наличии в Алматы, Астане и Шымкенте. Цены в тенге, 3D-модель и проверка совместимости.",
 };
@@ -36,7 +37,6 @@ export default async function BuilderPage({ searchParams }: Props) {
         description="Комплектующие со складов в Алматы, Астане и Шымкенте. Цены в тенге, 3D-модель каждой детали и проверка совместимости в реальном времени: сокет, память, габариты, питание."
       />
       <Builder catalog={catalog} presets={presets} />
-      <div className="pb-24" />
     </BuildProvider>
   );
 }

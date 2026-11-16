@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE, sessionSecret, verifySessionToken } from "@/infrastructure/auth/session";
 
-/** Все страницы /admin, кроме входа, доступны только с валидной сессией. */
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   if (pathname === "/admin/login") return NextResponse.next();

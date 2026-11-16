@@ -2,25 +2,32 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { THEME_INIT_SCRIPT } from "@/presentation/theme/theme";
 import "./globals.css";
+import { SITE_URL } from "./siteUrl";
 
 const sans = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter", display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin", "cyrillic"], variable: "--font-jetbrains", display: "swap" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Proxima Computers — сборка компьютеров на заказ",
   description: "Подбор комплектующих, сборка и 72-часовое тестирование игровых ПК и рабочих станций.",
+  applicationName: "Proxima Computers",
+  openGraph: {
+    type: "website",
+    locale: "ru_KZ",
+    siteName: "Proxima Computers",
+    title: "Proxima Computers — сборка компьютеров на заказ",
+    description: "Соберите ПК из комплектующих в наличии в Казахстане: цены в тенге, 3D-модель и проверка совместимости.",
+  },
+  twitter: { card: "summary" },
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f4f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f0f10" },
-  ],
+  themeColor: "#07090c",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    // data-theme выставляется скриптом до гидрации — расхождение ожидаемо
     <html lang="ru" className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
