@@ -2,10 +2,6 @@ import "server-only";
 import type { NewComponent } from "@/application/use-cases/admin/ManageComponents";
 import { CITIES, type ComponentCategory, type PcComponent } from "@/domain/entities/PcComponent";
 
-/**
- * Адаптер: FormData → данные комплектующего. Здесь только разбор строк в типы;
- * все правила (диапазоны, обязательность) проверяет доменный validateComponent.
- */
 const str = (form: FormData, key: string) => String(form.get(key) ?? "").trim();
 const num = (form: FormData, key: string) => {
   const raw = str(form, key).replace(/\s/g, "").replace(",", ".");
@@ -13,7 +9,6 @@ const num = (form: FormData, key: string) => {
 };
 const all = (form: FormData, key: string) => form.getAll(key).map(String);
 
-/** «Ключ: значение» построчно → объект характеристик */
 export const parseSpecs = (raw: string): Record<string, string> =>
   Object.fromEntries(
     raw

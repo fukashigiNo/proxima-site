@@ -19,7 +19,6 @@ export interface ActionState {
 
 const safeNext = (value: FormDataEntryValue | null) => {
   const next = typeof value === "string" ? value : "";
-  // Только внутренние пути админки — защита от open redirect
   return next.startsWith("/admin") && !next.startsWith("//") ? next : "/admin";
 };
 
@@ -80,19 +79,14 @@ export async function updateOffer(_: ActionState, form: FormData): Promise<Actio
     if (error instanceof DomainError) return { message: error.message };
     throw error;
   }
-  // Публичные страницы показывают новые цены и остатки
-  // Публичные страницы (главная и «Сборки» — статические) и вся админка
   revalidatePath("/", "layout");
   return { ok: true, message: "Сохранено" };
 }
 
-/** Публичные страницы и админка зависят от каталога и сборок — обновляем их кэш. */
 function revalidateCatalog() {
-  // Публичные страницы (главная и «Сборки» — статические) и вся админка
   revalidatePath("/", "layout");
 }
 
-/** Общая обработка доменных ошибок для форм */
 async function run(task: () => Promise<unknown>): Promise<ActionState | null> {
   try {
     await task();

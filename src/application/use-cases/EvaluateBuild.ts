@@ -10,7 +10,6 @@ import {
   type CompatibilityIssue,
 } from "@/domain/services/compatibility";
 
-/** Стоимость работ: сборка, кабель-менеджмент, тестирование (₸). */
 export const ASSEMBLY_FEE = 25_000;
 
 export interface BuildSummary {
@@ -21,13 +20,11 @@ export interface BuildSummary {
   readonly recommendedPsu: number;
   readonly issues: CompatibilityIssue[];
   readonly missing: ComponentCategory[];
-  /** Категории в конфликте (ошибки) — подсвечиваются красным */
   readonly conflictCategories: ComponentCategory[];
   readonly isComplete: boolean;
   readonly isValid: boolean;
 }
 
-/** Чистый use case без I/O — безопасно вызывать на клиенте при каждом изменении. */
 export const evaluateBuild = (selection: BuildSelection): BuildSummary => {
   const partsPrice = totalPrice(selection);
   const powerDraw = estimatePowerDraw(selection);
@@ -57,7 +54,6 @@ export interface CandidateEvaluation {
   readonly reasons: string[];
 }
 
-/** Как изменится совместимость, если выбрать этот вариант. */
 export const evaluateCandidate = (selection: BuildSelection, candidate: PcComponent): CandidateEvaluation => {
   const issues = issuesForCandidate(selection, candidate);
   const status: CandidateStatus = issues.some((i) => i.severity === "error")

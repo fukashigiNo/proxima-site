@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { REQUEST_STATUSES, REQUEST_STATUS_LABELS, type RequestStatus } from "@/domain/entities/BuildRequest";
+import { REQUEST_CHANNEL_LABELS, REQUEST_STATUSES, REQUEST_STATUS_LABELS, channelOf, type RequestStatus } from "@/domain/entities/BuildRequest";
 import { CATEGORY_LABELS } from "@/domain/entities/PcComponent";
 import { container } from "@/infrastructure/container";
+import { ChannelBadge, requestTitle } from "@/presentation/components/admin/ChannelBadge";
 import { StatusBadge } from "@/presentation/components/admin/StatusBadge";
 import { StatusControl } from "@/presentation/components/admin/StatusControl";
 import { cn } from "@/presentation/lib/cn";
@@ -21,7 +22,7 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
 
   return (
     <>
-      <PageTitle title="Заявки" description="Заявки из формы на сайте и конструктора" />
+      <PageTitle title="Заявки" description="Заявки с формы на сайте и переходы в Telegram / WhatsApp" />
 
       <div className="mb-4 flex flex-wrap gap-2">
         {[undefined, ...REQUEST_STATUSES].map((s) => (
@@ -48,22 +49,42 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
             <details key={r.id} id={r.id} open={r.status === "new"} className="group scroll-mt-6 rounded-panel border border-line bg-bg target:border-accent">
               <summary className="grid cursor-pointer list-none grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-5 py-4 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_auto_auto] [&::-webkit-details-marker]:hidden">
                 <span className="min-w-0">
-                  <span className="block truncate font-medium">{r.name}</span>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className="truncate font-medium">{requestTitle(r)}</span>
+                    <ChannelBadge request={r} />
+                  </span>
                   <span className="block truncate text-xs text-muted">
                     {r.id} · {dateFormat.format(new Date(r.createdAt))}
                   </span>
                 </span>
-                <span className="hidden truncate text-sm sm:block">{r.contact}</span>
+                <span className="hidden truncate text-sm sm:block">{r.contact || REQUEST_CHANNEL_LABELS[channelOf(r)]}</span>
                 <span className="font-mono text-sm">{r.summary ? formatPrice(r.summary.total) : "—"}</span>
                 <StatusBadge status={r.status} />
               </summary>
 
               <div className="grid gap-5 border-t border-line px-5 py-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
                 <dl className="grid content-start gap-3 text-sm">
-                  <div>
-                    <dt className="text-xs text-muted">Контакт</dt>
-                    <dd className="select-all">{r.contact}</dd>
-                  </div>
+                  {r.contact ? (
+                    <div>
+                      <dt className="text-xs text-muted">Контакт</dt>
+                      <dd className="select-all">{r.contact}</dd>
+                    </div>
+                  ) : (
+                    <div>
+                      <dt className="text-xs text-muted">Контакт</dt>
+                      <dd>
+                        Клиент перешёл в {REQUEST_CHANNEL_LABELS[channelOf(r)]}. Найдите в чате сообщение с кодом{" "}
+                        <span className="select-all font-mono font-medium">{r.id}</span>.
+                        <span className="mt-1 block text-xs text-muted">Если сообщения нет — клиент передумал отправлять.</span>
+                      </dd>
+                    </div>
+                  )}
+                  {r.buildTitle && (
+                    <div>
+                      <dt className="text-xs text-muted">Сборка</dt>
+                      <dd>{r.buildTitle}</dd>
+                    </div>
+                  )}
                   {r.budget !== undefined && (
                     <div>
                       <dt className="text-xs text-muted">Бюджет</dt>

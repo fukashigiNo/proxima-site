@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
+import { CountUp } from "@/presentation/components/motion/CountUp";
+import { Reveal } from "@/presentation/components/motion/Reveal";
+import { TextReveal } from "@/presentation/components/motion/TextReveal";
+import { OrderButton } from "@/presentation/components/order/OrderButton";
 import { ProcessSteps } from "@/presentation/components/sections/Process";
 import { LinkButton } from "@/presentation/components/ui/Button";
 import { Container, Eyebrow, PageIntro, Section } from "@/presentation/components/ui/Layout";
 import { SERVICE_FACTS } from "@/presentation/content/facts";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/process" },
   title: "Как мы работаем — Proxima Computers",
   description: "Консультация, подбор, ручная сборка и 72 часа стресс-тестов. Гарантия 3 года на работу.",
 };
@@ -54,20 +59,22 @@ export default function ProcessPage() {
           <div className="grid content-start gap-8">
             <Eyebrow>Что входит в сборку</Eyebrow>
             <ul className="grid gap-3 text-[17px]">
-              {INCLUDED.map((item) => (
-                <li key={item} className="flex gap-3">
-                  <span className="text-accent" aria-hidden>✓</span>
+              {INCLUDED.map((item, i) => (
+                <Reveal as="li" key={item} delay={i * 70} className="flex gap-3">
+                  <span className="mt-1 grid size-5 shrink-0 place-items-center rounded-full border border-accent/50 text-[11px] text-accent" aria-hidden>✓</span>
                   {item}
-                </li>
+                </Reveal>
               ))}
             </ul>
           </div>
           <dl className="grid content-start gap-8 border-t border-line pt-8 md:border-l md:border-t-0 md:pl-12 md:pt-0">
-            {SERVICE_FACTS.map((fact) => (
-              <div key={fact.label}>
-                <dt className="text-[44px] font-medium tracking-[-0.04em]">{fact.value}</dt>
+            {SERVICE_FACTS.map((fact, i) => (
+              <Reveal key={fact.label} delay={i * 120}>
+                <dt className="text-glow text-[52px] font-semibold tracking-[-0.04em] text-accent">
+                  <CountUp value={fact.value} />
+                </dt>
                 <dd className="text-muted">{fact.label}</dd>
-              </div>
+              </Reveal>
             ))}
           </dl>
         </Container>
@@ -75,29 +82,37 @@ export default function ProcessPage() {
 
       <Section>
         <Container className="grid gap-10 md:grid-cols-[1fr_1.4fr]">
-          <h2 className="text-[clamp(28px,3.5vw,44px)] font-medium leading-[1.05] tracking-[-0.035em]">Частые вопросы</h2>
+          <TextReveal text="Частые вопросы" className="text-[clamp(30px,3.8vw,50px)] font-semibold leading-[1.02] tracking-[-0.04em]" />
           <div className="grid border-t border-line">
-            {FAQ.map((item) => (
-              <details key={item.q} className="group border-b border-line py-5">
+            {FAQ.map((item, i) => (
+              <Reveal key={item.q} delay={i * 80}>
+              <details className="group border-b border-line py-5">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-medium [&::-webkit-details-marker]:hidden">
                   {item.q}
-                  <span className="text-muted transition-transform group-open:rotate-45" aria-hidden>+</span>
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full border border-line-strong text-muted transition-[rotate,background-color,color] duration-300 group-open:rotate-45 group-open:bg-ink group-open:text-bg" aria-hidden>+</span>
                 </summary>
-                <p className="mt-3 leading-relaxed text-muted">{item.a}</p>
+                <p className="pt-3 leading-relaxed text-muted">{item.a}</p>
               </details>
+              </Reveal>
             ))}
           </div>
         </Container>
       </Section>
 
       <Container className="pb-24">
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-panel bg-ink px-8 py-9 text-bg">
-          <p className="text-[24px] font-medium tracking-[-0.02em]">Готовы начать?</p>
+        <Reveal className="glow-border rounded-panel">
+          <span className="glow-border-ring" aria-hidden />
+          <span className="glow-border-halo" aria-hidden />
+          <div className="flex flex-wrap items-center justify-between gap-6 rounded-panel bg-surface/75 px-8 py-10 sm:px-12">
+          <p className="text-[clamp(26px,3vw,36px)] font-semibold tracking-[-0.03em]">Готовы начать?</p>
           <div className="flex flex-wrap gap-2">
-            <LinkButton href="/builder" variant="ghost" className="border-inverse-line text-bg [a&]:hover:border-bg">Собрать в конструкторе</LinkButton>
-            <LinkButton href="/order" className="bg-bg text-ink [a&]:hover:bg-accent [a&]:hover:text-on-accent">Оставить заявку</LinkButton>
+            <LinkButton href="/builder" variant="ghost" magnetic>Собрать в конструкторе</LinkButton>
+            <OrderButton selection={{}} magnetic>
+              Оставить заявку
+            </OrderButton>
           </div>
-        </div>
+          </div>
+        </Reveal>
       </Container>
     </>
   );

@@ -1,3 +1,4 @@
+import { ChannelBadge, requestTitle } from "@/presentation/components/admin/ChannelBadge";
 import Link from "next/link";
 import { LOW_STOCK_THRESHOLD } from "@/application/use-cases/admin/GetDashboard";
 import { totalStock } from "@/domain/entities/PcComponent";
@@ -37,13 +38,16 @@ export default async function DashboardPage() {
             </Link>
           </div>
           {d.recent.length === 0 ? (
-            <p className="p-5 text-sm text-muted">Заявок пока нет — они появятся после отправки формы на сайте.</p>
+            <p className="p-5 text-sm text-muted">Заявок пока нет — они появятся после отправки формы или перехода клиента в мессенджер.</p>
           ) : (
             <ul className="divide-y divide-line">
               {d.recent.map((r) => (
                 <li key={r.id}>
                   <Link href={`/admin/requests#${r.id}`} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 px-5 py-3.5 text-ink no-underline hover:bg-surface">
-                    <span className="truncate text-sm font-medium">{r.name}</span>
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span className="truncate text-sm font-medium">{requestTitle(r)}</span>
+                      <ChannelBadge request={r} />
+                    </span>
                     <StatusBadge status={r.status} />
                     <span className="truncate text-xs text-muted">
                       {r.id} · {dateFormat.format(new Date(r.createdAt))}

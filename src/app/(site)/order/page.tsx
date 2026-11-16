@@ -7,6 +7,7 @@ import { parseParts, parseTitle } from "@/presentation/lib/routes";
 import { BuildProvider } from "@/presentation/state/BuildContext";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/order" },
   title: "Заявка — Proxima Computers",
   description: "Оставьте заявку на сборку ПК: ответим в течение часа в рабочее время и зафиксируем цену.",
 };
@@ -27,8 +28,12 @@ export default async function OrderPage({ searchParams }: Props) {
         description="Ответим в течение часа в рабочее время, уточним детали и зафиксируем цену."
       />
       <Container className="grid grid-cols-[minmax(0,1fr)] items-start gap-4 pb-24 md:grid-cols-2">
-        <RequestForm />
-        <OrderSummary />
+        <div className="animate-rise [animation-delay:240ms]">
+          <RequestForm />
+        </div>
+        <div className="animate-rise [animation-delay:340ms]">
+          <OrderSummary />
+        </div>
       </Container>
     </BuildProvider>
   );
