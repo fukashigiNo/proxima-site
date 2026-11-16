@@ -4,7 +4,6 @@ import { PartMaterial, GlowStrip } from "../parts/PartMaterial";
 import { SCENE_COLORS as C } from "../theme";
 import { Fan } from "./Fan";
 
-/** Стекло не должно перехватывать наведение на детали внутри корпуса */
 const noRaycast = () => null;
 
 function Glass({ args, position }: { args: [number, number, number]; position: [number, number, number] }) {
@@ -16,7 +15,6 @@ function Glass({ args, position }: { args: [number, number, number]; position: [
   );
 }
 
-/** Корпус Mid‑Tower: панорамное стекло спереди и сбоку, кожух БП, вентиляторы. */
 export function CaseShell({ color }: { color: "black" | "white" }) {
   const body = color === "white" ? C.chassisWhite : C.chassisBlack;
   const shroud = color === "white" ? "#dadad5" : "#29292d";
@@ -57,7 +55,6 @@ export function CaseShell({ color }: { color: "black" | "white" }) {
       <Glass position={[0, 0, 0.52]} args={[1.96, 2.26, 0.015]} />
       <Glass position={[0.99, 0, 0]} args={[0.015, 2.22, 1]} />
 
-      {/* Кожух БП: верхняя плита и передний блок, слева — окно на блок питания */}
       <mesh position={[0, -0.62, 0]}>
         <boxGeometry args={[1.92, 0.02, 1]} />
         <PartMaterial color={shroud} roughness={0.6} />

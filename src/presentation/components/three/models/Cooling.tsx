@@ -8,10 +8,8 @@ import { GlowStrip, PartMaterial } from "../parts/PartMaterial";
 import { MM, SCENE_COLORS as C } from "../theme";
 import { Fan } from "./Fan";
 
-/** Башенный кулер: высота пропорциональна реальной (мм). Начало — на поверхности процессора. */
 export function AirCooler({ heightMm }: { heightMm: number }) {
   const depth = heightMm * MM;
-  // 13 рёбер радиатора — одна геометрия
   const fins = useMemo(() => {
     const parts = Array.from({ length: 13 }, (_, i) =>
       new BoxGeometry(0.012, 0.46, depth - 0.06).translate(-0.17 + i * 0.028, 0, depth / 2 + 0.03),
@@ -25,7 +23,6 @@ export function AirCooler({ heightMm }: { heightMm: number }) {
       <mesh geometry={fins}>
         <PartMaterial color={C.fin} metalness={0.85} roughness={0.25} />
       </mesh>
-      {/* Тепловые трубки */}
       {[-0.08, 0, 0.08].map((y) => (
         <mesh key={y} position={[0, y, depth / 2]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.012, 0.012, depth, 8]} />
@@ -40,7 +37,6 @@ export function AirCooler({ heightMm }: { heightMm: number }) {
   );
 }
 
-/** Помпа СЖО на процессоре. */
 export function AioPump() {
   return (
     <group>
@@ -52,7 +48,6 @@ export function AioPump() {
         <torusGeometry args={[0.1, 0.012, 10, 40]} />
         <PartMaterial color={C.accent} glow={1.4} />
       </mesh>
-      {/* Шланги к радиатору */}
       {[-0.05, 0.05].map((x) => (
         <mesh key={x} position={[x, 0.22, 0.1]}>
           <cylinderGeometry args={[0.018, 0.018, 0.34, 10]} />
@@ -63,7 +58,6 @@ export function AioPump() {
   );
 }
 
-/** Радиатор СЖО с вентиляторами снизу; длина по реальному размеру (мм). */
 export function AioRadiator({ radiatorMm }: { radiatorMm: number }) {
   const length = radiatorMm * MM;
   const fanCount = radiatorMm === 280 ? 2 : radiatorMm / 120;

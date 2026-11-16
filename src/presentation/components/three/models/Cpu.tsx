@@ -3,7 +3,6 @@
 import { PartMaterial } from "../parts/PartMaterial";
 import { SCENE_COLORS as C } from "../theme";
 
-/** Процессор: подложка и теплораспределительная крышка. */
 export function Cpu() {
   return (
     <group>

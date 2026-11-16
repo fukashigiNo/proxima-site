@@ -2,7 +2,6 @@
 
 import { GlowStrip, PartMaterial } from "../parts/PartMaterial";
 
-/** Блок питания ATX (150×86×160 мм). Яркость полосы растёт с мощностью. */
 export function Psu({ wattage }: { wattage: number }) {
   const stripe = Math.min(0.6, 0.2 + wattage / 3000);
   return (

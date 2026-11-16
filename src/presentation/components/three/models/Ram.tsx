@@ -3,7 +3,6 @@
 import { GlowStrip, PartMaterial } from "../parts/PartMaterial";
 import { SCENE_COLORS as C } from "../theme";
 
-/** Модули памяти. 2 планки ставятся во 2-й и 4-й слоты, как рекомендуют производители плат. */
 export function Ram({ sticks }: { sticks: 2 | 4 }) {
   const slots = sticks === 2 ? [1, 3] : [0, 1, 2, 3];
   return (

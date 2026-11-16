@@ -1,10 +1,6 @@
 import type { BuildSelection } from "@/domain/entities/Build";
 import type { FormFactor, PcComponent } from "@/domain/entities/PcComponent";
 
-/**
- * Визуальное описание сборки — всё, что нужно 3D-слою, и ничего лишнего.
- * Отделяет рендер от доменных сущностей: модели не знают о ценах, сокетах и т.п.
- */
 export interface CaseVisual { id: string; color: "black" | "white" }
 export interface BoardVisual { id: string; formFactor: FormFactor }
 export interface GpuVisual { id: string; lengthMm: number; fans: 2 | 3; slots: number }
@@ -26,7 +22,6 @@ export interface PcVisualSpec {
   psu: PsuVisual | null;
 }
 
-/** Размеры «призраков» для ещё не выбранных деталей */
 export const GHOST_SPEC: Required<{ [K in keyof PcVisualSpec]: NonNullable<PcVisualSpec[K]> }> = {
   case: { id: "ghost", color: "white" },
   board: { id: "ghost", formFactor: "ATX" },
@@ -53,6 +48,5 @@ export const toVisualSpec = ({ case: pcCase, motherboard, cpu, cooling, ram, gpu
   psu: psu ? { id: psu.id, wattage: psu.wattage } : null,
 });
 
-/** Визуал одной детали — для инспектора. */
 export const toComponentVisual = (component: PcComponent) =>
   toVisualSpec({ [component.category]: component } as BuildSelection);

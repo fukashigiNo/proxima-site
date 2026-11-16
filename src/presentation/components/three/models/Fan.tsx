@@ -17,7 +17,6 @@ interface FanProps {
 
 const BLADES = 7;
 
-/** Все лопасти — одна геометрия (1 draw call вместо 7); кэш по размеру вентилятора. */
 const rotorCache = new Map<number, BufferGeometry>();
 const rotorGeometry = (radius: number) => {
   const key = Math.round(radius * 1000);
@@ -37,7 +36,6 @@ const rotorGeometry = (radius: number) => {
   return geometry;
 };
 
-/** Вентилятор: рамка с подсветкой, ступица, вращающиеся лопасти. Ось вращения — Z. */
 export function Fan({ size = 0.36, speed = 6, position, rotation }: FanProps) {
   const rotor = useRef<Group>(null);
   const { ghost } = usePartState();
