@@ -1,12 +1,10 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/presentation/lib/cn";
 
-/** Центрированная колонка контента с боковыми полями. */
 export function Container({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("mx-auto w-full max-w-[1280px] px-4 sm:px-8", className)} {...props} />;
 }
 
-/** Секция страницы с вертикальным ритмом; surface — альтернативный фон. */
 export function Section({
   id,
   surface = false,
@@ -25,17 +23,14 @@ export function Section({
   );
 }
 
-/** Моноширинная надпись над заголовком. */
 export function Eyebrow({ className, children }: { className?: string; children: ReactNode }) {
   return <p className={cn("font-mono text-[13px] uppercase tracking-[0.08em] text-muted", className)}>{children}</p>;
 }
 
-/** Маленькая подпись-метка (лейбл значения). */
 export function Label({ className, children }: { className?: string; children: ReactNode }) {
   return <p className={cn("font-mono text-[11px] uppercase tracking-[0.06em] text-muted", className)}>{children}</p>;
 }
 
-/** Шапка внутренней страницы: надпись, заголовок h1 и описание. */
 export function PageIntro({
   eyebrow,
   title,
@@ -48,13 +43,17 @@ export function PageIntro({
   children?: ReactNode;
 }) {
   return (
-    <section className="pb-10 pt-14 sm:pt-20">
+    <section className="pb-12 pt-14 sm:pt-24">
       <Container>
-        <Eyebrow className="mb-4">
-          <span className="text-accent">●</span> {eyebrow}
-        </Eyebrow>
-        <h1 className="max-w-[900px] text-[clamp(36px,5vw,64px)] font-medium leading-none tracking-[-0.04em]">{title}</h1>
-        {description && <p className="mt-[18px] max-w-[640px] text-[17px] leading-[1.55] text-muted">{description}</p>}
+        <p className="mb-5 flex animate-rise items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
+          <span className="size-2 rounded-full bg-accent shadow-[0_0_12px_var(--glow)]" aria-hidden />
+          {eyebrow}
+          <span className="h-px w-16 bg-gradient-to-r from-line-strong to-transparent" aria-hidden />
+        </p>
+        <h1 className="max-w-[900px] animate-rise text-[clamp(38px,5.4vw,76px)] font-semibold leading-[0.98] tracking-[-0.045em] [animation-delay:80ms]">{title}</h1>
+        {description && (
+          <p className="mt-[18px] max-w-[640px] animate-rise text-[17px] leading-[1.55] text-muted [animation-delay:160ms]">{description}</p>
+        )}
         {children}
       </Container>
     </section>

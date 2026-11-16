@@ -3,7 +3,6 @@
 import { useMemo } from "react";
 import { CanvasTexture } from "three";
 
-/** Запечённая мягкая тень: одна текстура-градиент вместо ContactShadows (рендер глубины + размытие каждый кадр). */
 export function SoftShadow({ y = -1.3, width = 3.4, depth = 1.8, opacity = 0.35 }) {
   const texture = useMemo(() => {
     const canvas = document.createElement("canvas");

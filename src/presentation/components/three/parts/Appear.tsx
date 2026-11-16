@@ -4,7 +4,6 @@ import { useFrame } from "@react-three/fiber";
 import { useRef, type ReactNode } from "react";
 import type { Group } from "three";
 
-/** Короткая анимация «установки» детали при её замене (перемонтируйте через key). */
 export function Appear({ children }: { children: ReactNode }) {
   const ref = useRef<Group>(null);
   useFrame((_, delta) => {

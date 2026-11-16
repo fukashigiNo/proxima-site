@@ -15,7 +15,6 @@ interface PartProps {
   children: ReactNode;
 }
 
-/** Интерактивная деталь: задаёт состояние материалов, обрабатывает наведение и клик. */
 export function Part({ category, active, conflict, ghost, onSelect, onHoverChange, children }: PartProps) {
   const [hovered, setHovered] = useState(false);
   const status: PartStatus = conflict ? "error" : active || hovered ? "active" : "idle";

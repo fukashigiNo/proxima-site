@@ -3,7 +3,6 @@
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { Box3, Vector3, type Group } from "three";
 
-/** Центрирует содержимое и масштабирует его так, чтобы наибольшая сторона была равна `size`. */
 export function Normalize({ size = 1.6, children }: { size?: number; children: ReactNode }) {
   const ref = useRef<Group>(null);
 

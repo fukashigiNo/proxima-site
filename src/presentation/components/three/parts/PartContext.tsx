@@ -6,7 +6,6 @@ export type PartStatus = "idle" | "active" | "error";
 
 export interface PartState {
   status: PartStatus;
-  /** Деталь не выбрана — рисуется полупрозрачным «призраком» */
   ghost: boolean;
 }
 

@@ -3,7 +3,6 @@
 import { PartMaterial } from "../parts/PartMaterial";
 import { SCENE_COLORS as C } from "../theme";
 
-/** M.2 2280; у PCIe 5.0 — массивный радиатор. */
 export function Storage({ gen }: { gen: 4 | 5 }) {
   return (
     <group>

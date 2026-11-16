@@ -10,7 +10,6 @@ interface Props {
   children: ReactNode;
 }
 
-/** Плавно сдвигает содержимое — «разнесённый вид», чтобы показать скрытую деталь. */
 export function Explode({ active, offset, children }: Props) {
   const ref = useRef<Group>(null);
 
