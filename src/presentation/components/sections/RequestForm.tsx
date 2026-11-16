@@ -8,13 +8,12 @@ import { formatPrice } from "@/presentation/lib/format";
 import { useBuild } from "@/presentation/state/BuildContext";
 import { Button } from "../ui/Button";
 
-const CARD = "grid gap-5 rounded-panel border border-line bg-bg p-6 md:p-9";
+const CARD = "grid gap-5 rounded-panel border border-line bg-surface/70 p-6 md:p-9";
 const INPUT =
-  "w-full resize-y border-0 border-b border-line-strong bg-transparent py-2 text-base text-ink outline-none transition-colors placeholder:text-muted/70 focus:border-ink aria-invalid:border-danger";
+  "w-full resize-y border-0 border-b border-line-strong bg-transparent py-2 text-base text-ink outline-none transition-colors placeholder:text-muted/70 focus:border-accent focus:shadow-[0_1px_0_0_var(--accent)] aria-invalid:border-danger";
 
 type Status = { kind: "idle" } | { kind: "sending" } | { kind: "done"; id: string } | { kind: "failed"; message: string };
 
-/** Форма заявки; если в контексте есть конфигурация — предлагает её приложить. */
 export function RequestForm() {
   const { selection, summary, presetTitle } = useBuild();
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -48,8 +47,8 @@ export function RequestForm() {
 
   if (status.kind === "done") {
     return (
-      <div className={`${CARD} justify-items-start`} role="status">
-        <span className="grid size-11 place-items-center rounded-full bg-accent text-xl text-on-accent" aria-hidden>
+      <div className={`${CARD} animate-rise justify-items-start`} role="status">
+        <span className="grid size-11 animate-pop place-items-center rounded-full bg-accent text-xl text-on-accent" aria-hidden>
           ✓
         </span>
         <h2 className="text-[26px] font-medium tracking-[-0.02em]">Заявка {status.id} принята</h2>

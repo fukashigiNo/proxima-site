@@ -15,7 +15,6 @@ interface Props {
   className?: string;
 }
 
-/** Инспектор: 3D-модель одного комплектующего, приведённая к единому размеру кадра. */
 export default function ComponentPreview({ component, className }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const inView = useInView(container);

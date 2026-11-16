@@ -9,7 +9,6 @@ import type PcSceneType from "./PcScene";
 
 const PcScene = dynamic(() => import("./PcScene"), { ssr: false, loading: () => <ScenePlaceholder /> });
 
-/** Лёгкая заглушка до запуска 3D: силуэт корпуса на CSS, без JS и WebGL. */
 export function ScenePlaceholder() {
   return (
     <div className="grid size-full place-items-center" aria-hidden>
@@ -25,11 +24,6 @@ export function ScenePlaceholder() {
   );
 }
 
-/**
- * Обёртка сцены: место под холст резервируется сразу (без сдвигов вёрстки),
- * а three.js загружается и WebGL создаётся только когда блок подходит к экрану
- * и пользователь начал взаимодействовать со страницей (см. useUserActivation).
- */
 export function PcSceneLazy({ className, ...props }: ComponentProps<typeof PcSceneType>) {
   const [ref, near] = useNearViewport<HTMLDivElement>();
   const activated = useUserActivation();

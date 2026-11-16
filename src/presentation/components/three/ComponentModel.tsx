@@ -10,7 +10,6 @@ import { Psu } from "./models/Psu";
 import { Ram } from "./models/Ram";
 import { Storage } from "./models/Storage";
 
-/** Отдельная 3D-модель комплектующего — для инспектора. Размеры берутся из характеристик. */
 export function ComponentModel({ component }: { component: PcComponent }) {
   switch (component.category) {
     case "case":
@@ -46,7 +45,6 @@ export function ComponentModel({ component }: { component: PcComponent }) {
       );
     case "gpu":
       return (
-        // Вентиляторами к камере
         <group rotation={[-1.15, 0, 0]}>
           <Gpu lengthMm={component.lengthMm} fans={component.fans} slots={component.slots} />
         </group>

@@ -6,6 +6,7 @@ import { useRef, useState, type PointerEvent } from "react";
 import { CATEGORY_LABELS, type ComponentCategory } from "@/domain/entities/PcComponent";
 import { useInView } from "@/presentation/hooks/useInView";
 import { PcModel, type PcModelProps } from "./PcModel";
+import { ExplodeProvider, type ExplodeSource } from "./parts/ScrollExplode";
 import { SoftShadow } from "./parts/SoftShadow";
 import { ResponsiveCamera } from "./ResponsiveCamera";
 import { SceneLights } from "./SceneLights";
@@ -13,16 +14,15 @@ import { SceneLights } from "./SceneLights";
 interface PcSceneProps extends Omit<PcModelProps, "onPartHover"> {
   autoRotate?: boolean;
   className?: string;
+  explode?: ExplodeSource;
 }
 
-/** Самодостаточная сцена: освещение без внешних HDR, рендер ставится на паузу вне экрана. */
-export default function PcScene({ autoRotate = true, className, ...model }: PcSceneProps) {
+export default function PcScene({ autoRotate = true, className, explode, ...model }: PcSceneProps) {
   const container = useRef<HTMLDivElement>(null);
   const tooltip = useRef<HTMLSpanElement>(null);
   const inView = useInView(container);
   const [hovered, setHovered] = useState<ComponentCategory | null>(null);
 
-  // Позиция подсказки обновляется напрямую в DOM — без ре-рендера на каждое движение мыши
   const moveTooltip = (event: PointerEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     tooltip.current?.style.setProperty("transform", `translate(${event.clientX - rect.left + 14}px, ${event.clientY - rect.top + 14}px)`);
@@ -45,9 +45,13 @@ export default function PcScene({ autoRotate = true, className, ...model }: PcSc
         <ResponsiveCamera />
         <SceneLights />
         <pointLight position={[0, 0.4, 0.2]} intensity={1.2} distance={2.5} color="#ffe2d6" />
+        <pointLight position={[-2.5, 1.5, -1.5]} intensity={6} distance={7} color="#ff5a2c" />
+        <pointLight position={[2.5, -0.5, 2]} intensity={4} distance={7} color="#41d9ff" />
 
         <Float speed={1.2} rotationIntensity={0.08} floatIntensity={0.25}>
-          <PcModel {...model} onPartHover={setHovered} />
+          <ExplodeProvider value={explode ?? null}>
+            <PcModel {...model} onPartHover={setHovered} />
+          </ExplodeProvider>
         </Float>
 
         <SoftShadow />
@@ -63,7 +67,7 @@ export default function PcScene({ autoRotate = true, className, ...model }: PcSc
       </Canvas>
       <span
         ref={tooltip}
-        className="inline-block whitespace-nowrap rounded-full bg-ink px-3 py-1.5 font-mono text-xs tracking-[0.02em] text-bg"
+        className="inline-block whitespace-nowrap rounded-full border border-accent/60 bg-bg/90 px-3 py-1.5 font-mono text-xs tracking-[0.02em] text-ink shadow-[0_0_20px_-4px_var(--glow)]"
         aria-hidden
         style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none", opacity: hovered ? 1 : 0, transition: "opacity 0.15s" }}
       >
