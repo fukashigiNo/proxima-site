@@ -29,7 +29,7 @@ export function OrderSummary() {
   }
 
   return (
-    <div className="grid content-start gap-5 hud-frame rounded-panel border border-line bg-surface/70 p-6 md:p-9">
+    <div className="grid content-start gap-5 rounded-panel border border-line bg-surface/70 p-6 md:p-9">
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-[22px] font-medium tracking-[-0.02em]">{presetTitle ?? "Своя конфигурация"}</h2>
         <Link href={builderHref({ selection })} className="whitespace-nowrap text-sm text-muted hover:text-ink">
@@ -41,7 +41,7 @@ export function OrderSummary() {
           const part = selection[category];
           return (
             <div key={category} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-0.5">
-              <dt className="col-span-2 font-mono text-[11px] uppercase tracking-[0.06em] text-muted">{CATEGORY_LABELS[category]}</dt>
+              <dt className="col-span-2 text-[13px] text-muted">{CATEGORY_LABELS[category]}</dt>
               <dd className="truncate">{part ? `${part.brand} ${part.name}` : <span className="text-muted">не выбрано</span>}</dd>
               <dd className="font-mono text-sm text-muted">{part ? formatPrice(part.price) : "—"}</dd>
             </div>

@@ -1,5 +1,5 @@
 export const SCENE_COLORS = {
-  accent: "#ff4f1f",
+  accent: "#a78bfa",
   error: "#e5241b",
   chassisWhite: "#e9e9e5",
   chassisBlack: "#202023",

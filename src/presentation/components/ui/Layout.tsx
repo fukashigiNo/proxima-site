@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/presentation/lib/cn";
 
@@ -24,11 +25,11 @@ export function Section({
 }
 
 export function Eyebrow({ className, children }: { className?: string; children: ReactNode }) {
-  return <p className={cn("font-mono text-[13px] uppercase tracking-[0.08em] text-muted", className)}>{children}</p>;
+  return <p className={cn("text-[14px] text-muted", className)}>{children}</p>;
 }
 
 export function Label({ className, children }: { className?: string; children: ReactNode }) {
-  return <p className={cn("font-mono text-[11px] uppercase tracking-[0.06em] text-muted", className)}>{children}</p>;
+  return <p className={cn("text-[13px] text-muted", className)}>{children}</p>;
 }
 
 export function PageIntro({
@@ -43,16 +44,18 @@ export function PageIntro({
   children?: ReactNode;
 }) {
   return (
-    <section className="pb-12 pt-14 sm:pt-24">
+    <section className="pb-10 pt-10 sm:pt-16">
       <Container>
-        <p className="mb-5 flex animate-rise items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
-          <span className="size-2 rounded-full bg-accent shadow-[0_0_12px_var(--glow)]" aria-hidden />
-          {eyebrow}
-          <span className="h-px w-16 bg-gradient-to-r from-line-strong to-transparent" aria-hidden />
-        </p>
-        <h1 className="max-w-[900px] animate-rise text-[clamp(38px,5.4vw,76px)] font-semibold leading-[0.98] tracking-[-0.045em] [animation-delay:80ms]">{title}</h1>
+        <nav aria-label="Навигационная цепочка" className="mb-6 animate-rise text-[14px] text-muted">
+          <Link href="/" className="text-muted no-underline hover:text-ink">
+            Главная
+          </Link>
+          <span className="mx-2 opacity-50">/</span>
+          <span className="text-ink">{eyebrow}</span>
+        </nav>
+        <h1 className="max-w-[860px] animate-rise text-[clamp(34px,4.6vw,64px)] font-semibold leading-[1.02] tracking-[-0.04em] [animation-delay:60ms]">{title}</h1>
         {description && (
-          <p className="mt-[18px] max-w-[640px] animate-rise text-[17px] leading-[1.55] text-muted [animation-delay:160ms]">{description}</p>
+          <p className="mt-5 max-w-[640px] animate-rise text-[17px] leading-relaxed text-muted [animation-delay:120ms]">{description}</p>
         )}
         {children}
       </Container>

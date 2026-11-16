@@ -1,86 +1,73 @@
 import Link from "next/link";
 import type { PresetBuildView } from "@/application/use-cases/GetPresetBuilds";
-import { CATEGORY_LABELS, COMPONENT_CATEGORIES } from "@/domain/entities/PcComponent";
-import { cn } from "@/presentation/lib/cn";
 import { formatPrice, formatWatts } from "@/presentation/lib/format";
 import { builderHref } from "@/presentation/lib/routes";
-import { Reveal } from "../motion/Reveal";
 import { OrderButton } from "../order/OrderButton";
-import { Tilt } from "../motion/Tilt";
 import { LinkButton } from "../ui/Button";
 
-export function PresetGrid({ presets, compact = false }: { presets: PresetBuildView[]; compact?: boolean }) {
-  const featuredIndex = presets.length >= 3 ? 1 : -1;
+const KEY_PARTS = [
+  { category: "cpu", label: "Процессор" },
+  { category: "gpu", label: "Видеокарта" },
+  { category: "ram", label: "Память" },
+  { category: "storage", label: "Диск" },
+] as const;
+
+export function PresetGrid({ presets }: { presets: PresetBuildView[] }) {
+  if (presets.length === 0) {
+    return (
+      <p className="border-y border-line py-10 text-muted">
+        Готовых сборок пока нет. Соберите свою в <Link href="/builder">конструкторе</Link> или напишите нам.
+      </p>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-3">
-      {presets.map((preset, i) => {
-        const featured = i === featuredIndex;
-        const categories = compact ? (["cpu", "gpu", "ram", "storage"] as const) : COMPONENT_CATEGORIES;
-        return (
-          <Reveal key={preset.id} delay={i * 120} className={cn("grid", featured && "glow-border rounded-panel")}>
-            {featured && <span className="glow-border-ring" aria-hidden />}
-            {featured && <span className="glow-border-halo" aria-hidden />}
-            <Tilt className="grid rounded-panel" max={4}>
-              <article
-                className={cn(
-                  "flex flex-col gap-4 rounded-panel border bg-surface/70 p-8 transition-colors duration-300",
-                  featured ? "border-transparent bg-surface" : "border-line hover:border-line-strong",
-                )}
-              >
-                <div className="flex items-center justify-between">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-accent-2">{preset.tagline}</p>
-                  {featured && (
-                    <span className="rounded-full bg-accent px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.1em] text-on-accent shadow-[0_0_20px_var(--glow)]">
-                      Хит
-                    </span>
-                  )}
+    <div className="border-t border-line">
+      {presets.map((preset) => (
+        <article
+          key={preset.id}
+          className="grid gap-6 border-b border-line py-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)_auto] lg:gap-12"
+        >
+          <div className="grid content-start gap-2">
+            <h2 className="text-[28px] font-semibold tracking-[-0.03em]">{preset.title}</h2>
+            <p className="text-[15px] text-accent">{preset.tagline}</p>
+            <p className="max-w-[360px] leading-relaxed text-muted">{preset.purpose}</p>
+          </div>
+
+          <div className="grid content-start gap-3">
+          <dl className="grid content-start gap-x-8 gap-y-3 text-[15px] sm:grid-cols-2">
+            {KEY_PARTS.map(({ category, label }) => {
+              const part = preset.selection[category];
+              if (!part) return null;
+              return (
+                <div key={category}>
+                  <dt className="text-[13px] text-muted">{label}</dt>
+                  <dd>
+                    {part.brand} {part.name}
+                  </dd>
                 </div>
-                <h2 className="text-[32px] font-semibold tracking-[-0.035em]">{preset.title}</h2>
-                <p className="leading-normal text-muted">{preset.purpose}</p>
-                <dl className="mt-2 grid gap-2.5 border-y border-line py-5 text-[15px]">
-                  {categories.map((category) => {
-                    const part = preset.selection[category];
-                    if (!part) return null;
-                    return (
-                      <div key={category} className="grid gap-0.5">
-                        {!compact && (
-                          <dt className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted">{CATEGORY_LABELS[category]}</dt>
-                        )}
-                        <dd>
-                          <span className="text-muted">{part.brand}</span> {part.name}
-                        </dd>
-                      </div>
-                    );
-                  })}
-                </dl>
-                {!compact && (
-                  <p className="font-mono text-[12px] text-muted">
-                    ≈ {formatWatts(preset.summary.powerDraw)} · сборка и тест включены
-                  </p>
-                )}
-                <div className="mt-auto grid gap-4 pt-2">
-                  <p className="text-[28px] font-semibold tracking-[-0.03em]">{formatPrice(preset.summary.total)}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {!compact && (
-                      <OrderButton selection={preset.selection} title={preset.title} variant={featured ? "primary" : "ghost"} className="flex-1">
-                        Заказать
-                      </OrderButton>
-                    )}
-                    <LinkButton href={builderHref({ preset: preset.id })} variant="ghost" className="flex-1">
-                      Настроить
-                    </LinkButton>
-                  </div>
-                </div>
-              </article>
-            </Tilt>
-          </Reveal>
-        );
-      })}
-      {presets.length === 0 && (
-        <p className="rounded-panel border border-line p-8 text-muted">
-          Готовых сборок пока нет — соберите свою в <Link href="/builder">конструкторе</Link>.
-        </p>
-      )}
+              );
+            })}
+          </dl>
+            <Link href={builderHref({ preset: preset.id })} className="text-[14px] text-muted underline-offset-4 hover:text-ink">
+              Весь состав, около {formatWatts(preset.summary.powerDraw)} под нагрузкой
+            </Link>
+          </div>
+
+          <div className="grid content-start gap-4 lg:min-w-[230px] lg:justify-items-end">
+            <p className="text-[28px] font-semibold tracking-[-0.03em]">{formatPrice(preset.summary.total)}</p>
+            <p className="-mt-3 text-[13px] text-muted">со сборкой и тестом</p>
+            <div className="flex flex-wrap gap-2">
+              <OrderButton selection={preset.selection} title={preset.title}>
+                Заказать
+              </OrderButton>
+              <LinkButton href={builderHref({ preset: preset.id })} variant="ghost">
+                Поменять детали
+              </LinkButton>
+            </div>
+          </div>
+        </article>
+      ))}
     </div>
   );
 }

@@ -1,5 +1,7 @@
+import { BUSINESS, daysWord, yearsWord } from "./business";
+
 export const SERVICE_FACTS = [
-  { value: "72 ч", label: "стресс-тест каждой сборки" },
-  { value: "3 года", label: "гарантии на работу" },
-  { value: "48 ч", label: "от заявки до готового ПК" },
+  { value: `${BUSINESS.testHours} ч`, label: "гоняем под нагрузкой каждую сборку" },
+  { value: `${BUSINESS.warrantyYears} ${yearsWord(BUSINESS.warrantyYears)}`, label: "гарантии на нашу работу" },
+  { value: `${BUSINESS.buildDays} ${daysWord(BUSINESS.buildDays)}`, label: "обычно от заявки до готового ПК" },
 ];

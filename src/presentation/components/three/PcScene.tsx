@@ -44,8 +44,8 @@ export default function PcScene({ autoRotate = true, className, explode, ...mode
       >
         <ResponsiveCamera />
         <SceneLights />
-        <pointLight position={[0, 0.4, 0.2]} intensity={1.2} distance={2.5} color="#ffe2d6" />
-        <pointLight position={[-2.5, 1.5, -1.5]} intensity={6} distance={7} color="#ff5a2c" />
+        <pointLight position={[0, 0.4, 0.2]} intensity={1.2} distance={2.5} color="#efe6ff" />
+        <pointLight position={[-2.5, 1.5, -1.5]} intensity={6} distance={7} color="#8b5cf6" />
         <pointLight position={[2.5, -0.5, 2]} intensity={4} distance={7} color="#41d9ff" />
 
         <Float speed={1.2} rotationIntensity={0.08} floatIntensity={0.25}>
@@ -67,7 +67,7 @@ export default function PcScene({ autoRotate = true, className, explode, ...mode
       </Canvas>
       <span
         ref={tooltip}
-        className="inline-block whitespace-nowrap rounded-full border border-accent/60 bg-bg/90 px-3 py-1.5 font-mono text-xs tracking-[0.02em] text-ink shadow-[0_0_20px_-4px_var(--glow)]"
+        className="inline-block whitespace-nowrap rounded-full border border-accent/60 bg-bg/90 px-3 py-1.5 text-xs text-ink"
         aria-hidden
         style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none", opacity: hovered ? 1 : 0, transition: "opacity 0.15s" }}
       >

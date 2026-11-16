@@ -52,7 +52,7 @@ export function RequestForm() {
           ✓
         </span>
         <h2 className="text-[26px] font-medium tracking-[-0.02em]">Заявка {status.id} принята</h2>
-        <p className="text-muted">Скоро свяжемся с вами для подтверждения конфигурации.</p>
+        <p className="text-muted">Мы получили заявку и скоро напишем, чтобы всё уточнить.</p>
         <Button variant="ghost" onClick={() => setStatus({ kind: "idle" })}>
           Отправить ещё одну
         </Button>
@@ -63,11 +63,11 @@ export function RequestForm() {
   return (
     <form className={CARD} onSubmit={handleSubmit} noValidate>
       <Field name="name" label="Имя" error={errors.name} autoComplete="name" />
-      <Field name="contact" label="Телефон, e‑mail или Telegram" error={errors.contact} />
-      <Field name="budget" label="Бюджет, ₸ (необязательно)" error={errors.budget} inputMode="numeric" />
+      <Field name="contact" label="Как с вами связаться: телефон, Telegram или почта" error={errors.contact} />
+      <Field name="budget" label="Сколько готовы потратить, ₸ (если знаете)" error={errors.budget} inputMode="numeric" />
       <label className="grid gap-2">
-        <span className="text-[13px] text-muted">Комментарий</span>
-        <textarea className={INPUT} name="comment" rows={3} maxLength={1000} placeholder="Игры, монтаж, тишина, подсветка…" />
+        <span className="text-[13px] text-muted">Для чего компьютер</span>
+        <textarea className={INPUT} name="comment" rows={3} maxLength={1000} placeholder="Например: Warzone на 1440p, иногда монтаж, чтобы было тихо" />
         {errors.comment && <em className="text-[13px] not-italic text-danger">{errors.comment}</em>}
       </label>
 

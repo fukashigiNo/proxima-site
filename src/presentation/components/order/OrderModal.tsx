@@ -117,7 +117,7 @@ function OrderModalContent({ draft, onClose }: { draft: OrderDraft; onClose: () 
   ];
 
   return (
-    <div className="order-panel hud-frame relative grid gap-6 rounded-panel border border-line bg-surface p-6 shadow-float sm:p-8">
+    <div className="order-panel relative grid gap-6 rounded-panel border border-line bg-surface p-6 shadow-float sm:p-8">
       <button
         type="button"
         onClick={onClose}
@@ -128,8 +128,7 @@ function OrderModalContent({ draft, onClose }: { draft: OrderDraft; onClose: () 
       </button>
 
       <div className="grid gap-2 pr-10">
-        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent-2">Оформление</p>
-        <h2 id="order-modal-title" className="text-[26px] font-semibold leading-tight tracking-[-0.03em]">
+                <h2 id="order-modal-title" className="text-[26px] font-semibold leading-tight tracking-[-0.03em]">
           Куда отправить заказ?
         </h2>
         <p className="text-sm text-muted">
