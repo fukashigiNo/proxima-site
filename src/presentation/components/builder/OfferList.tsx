@@ -15,7 +15,6 @@ interface Props {
 
 const STATUS_TEXT = { ok: "Совместимо", warning: "С оговорками", error: "Несовместимо" } as const;
 
-/** Список предложений: для каждого — динамическая проверка совместимости с текущей сборкой. */
 export function OfferList({ offers, city, onInspect }: Props) {
   const { selection, activeCategory, select, remove } = useBuild();
   const current = selection[activeCategory];
@@ -27,18 +26,19 @@ export function OfferList({ offers, city, onInspect }: Props) {
 
   return (
     <div className="grid gap-2" role="radiogroup" onMouseLeave={() => onInspect(null)}>
-      {offers.map((offer) => {
+      {offers.map((offer, index) => {
         const checked = current?.id === offer.id;
         const { status, reasons } = evaluateCandidate(rest, offer);
         const stock = stockIn(offer, city);
         return (
           <div
             key={offer.id}
+            style={{ animationDelay: `${Math.min(index, 10) * 35}ms` }}
             role="radio"
             tabIndex={0}
             aria-checked={checked}
             data-status={status}
-            className="group grid cursor-pointer grid-cols-[auto_1fr] items-start gap-4 rounded-card border border-line bg-bg px-[18px] py-4 outline-none transition-[border-color,opacity] hover:border-line-strong focus-visible:border-line-strong aria-checked:border-ink aria-checked:shadow-[inset_0_0_0_1px_var(--ink)] data-[status=error]:aria-checked:border-danger data-[status=error]:aria-checked:shadow-[inset_0_0_0_1px_var(--danger)] data-[status=error]:not-aria-checked:opacity-60 sm:grid-cols-[auto_1fr_auto]"
+            className="group grid animate-rise cursor-pointer grid-cols-[auto_1fr] items-start gap-4 rounded-card border border-line bg-surface/70 px-[18px] py-4 outline-none transition-[border-color,opacity,translate] duration-300 hover:-translate-y-0.5 hover:border-line-strong focus-visible:border-line-strong aria-checked:border-accent aria-checked:bg-surface-2 aria-checked:shadow-[inset_0_0_0_1px_var(--accent),0_0_30px_-12px_var(--glow)] data-[status=error]:aria-checked:border-danger data-[status=error]:aria-checked:shadow-[inset_0_0_0_1px_var(--danger)] data-[status=error]:not-aria-checked:opacity-60 sm:grid-cols-[auto_1fr_auto]"
             onMouseEnter={() => onInspect(offer)}
             onFocus={() => onInspect(offer)}
             onClick={() => (checked ? remove(offer.category) : select(offer))}
@@ -50,7 +50,7 @@ export function OfferList({ offers, city, onInspect }: Props) {
               }
             }}
           >
-            <span className="mt-0.5 size-[18px] rounded-full border-[1.5px] border-line-strong transition-[border] group-aria-checked:border-[5px] group-aria-checked:border-accent" aria-hidden />
+            <span className="mt-0.5 size-[18px] rounded-full border-[1.5px] border-line-strong transition-[border] group-aria-checked:border-[5px] group-aria-checked:border-accent group-aria-checked:shadow-[0_0_10px_var(--glow)]" aria-hidden />
             <div className="grid min-w-0 gap-1">
               <p className="text-[15px] font-medium">
                 <span className="font-normal text-muted">{offer.brand}</span> {offer.name}

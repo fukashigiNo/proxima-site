@@ -8,7 +8,6 @@ import { useBuild } from "@/presentation/state/BuildContext";
 import { LinkButton } from "../ui/Button";
 import { Label } from "../ui/Layout";
 
-/** Сводка конфигурации, приложенной к заявке. */
 export function OrderSummary() {
   const { selection, summary, presetTitle } = useBuild();
   const hasParts = COMPONENT_CATEGORIES.some((c) => selection[c]);
@@ -30,7 +29,7 @@ export function OrderSummary() {
   }
 
   return (
-    <div className="grid content-start gap-5 rounded-panel border border-line bg-bg p-6 md:p-9">
+    <div className="grid content-start gap-5 hud-frame rounded-panel border border-line bg-surface/70 p-6 md:p-9">
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-[22px] font-medium tracking-[-0.02em]">{presetTitle ?? "Своя конфигурация"}</h2>
         <Link href={builderHref({ selection })} className="whitespace-nowrap text-sm text-muted hover:text-ink">
@@ -50,7 +49,7 @@ export function OrderSummary() {
         })}
       </dl>
       <div className="grid gap-1">
-        <p className="text-[32px] font-medium tracking-[-0.03em]">{formatPrice(summary.total)}</p>
+        <p className="text-[34px] font-semibold tracking-[-0.03em]">{formatPrice(summary.total)}</p>
         <p className="text-[13px] text-muted">
           комплектующие {formatPrice(summary.partsPrice)} + сборка {formatPrice(summary.assemblyFee)} · ≈ {formatWatts(summary.powerDraw)}
         </p>

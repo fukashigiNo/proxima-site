@@ -18,7 +18,7 @@ export function Toolbar({ filter, onFilterChange, presets }: Props) {
   return (
     <div className="grid gap-3">
       <div className="flex flex-wrap items-center gap-2.5">
-        <label className="inline-flex h-10 items-center gap-2 rounded-full border border-line-strong bg-bg pl-3.5 pr-1.5 text-sm">
+        <label className="inline-flex h-10 items-center gap-2 rounded-full border border-line-strong bg-surface/70 pl-3.5 pr-1.5 text-sm">
           <span className="text-muted">Город</span>
           <select className="cursor-pointer border-0 bg-transparent pr-1 text-ink outline-none" value={filter.city} onChange={(e) => update({ city: e.target.value as City | "all" })}>
             <option value="all">Весь Казахстан</option>
@@ -29,7 +29,7 @@ export function Toolbar({ filter, onFilterChange, presets }: Props) {
             ))}
           </select>
         </label>
-        <label className="inline-flex h-10 items-center gap-2 rounded-full border border-line-strong bg-bg pl-3.5 pr-1.5 text-sm">
+        <label className="inline-flex h-10 items-center gap-2 rounded-full border border-line-strong bg-surface/70 pl-3.5 pr-1.5 text-sm">
           <span className="text-muted">Сортировка</span>
           <select className="cursor-pointer border-0 bg-transparent pr-1 text-ink outline-none" value={filter.sort} onChange={(e) => update({ sort: e.target.value as SortOrder })}>
             <option value="price-asc">Сначала дешевле</option>
@@ -46,14 +46,14 @@ export function Toolbar({ filter, onFilterChange, presets }: Props) {
         {presets.map((preset) => (
           <button
             key={preset.id}
-            className="h-8 rounded-full border border-line bg-transparent px-3.5 text-[13px] text-ink transition-colors hover:border-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-bg"
+            className="h-8 rounded-full border border-line bg-transparent px-3.5 text-[13px] text-ink transition-colors hover:border-line-strong aria-pressed:border-accent aria-pressed:bg-accent/15 aria-pressed:text-ink aria-pressed:shadow-[0_0_16px_-4px_var(--glow)]"
             aria-pressed={presetTitle === preset.title}
             onClick={() => loadPreset(preset.selection, preset.title)}
           >
             {preset.title.replace("Proxima ", "")}
           </button>
         ))}
-        <button className="h-8 rounded-full border border-line bg-transparent px-3.5 text-[13px] text-ink transition-colors hover:border-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-bg" onClick={reset}>
+        <button className="h-8 rounded-full border border-line bg-transparent px-3.5 text-[13px] text-ink transition-colors hover:border-line-strong aria-pressed:border-accent aria-pressed:bg-accent/15 aria-pressed:text-ink aria-pressed:shadow-[0_0_16px_-4px_var(--glow)]" onClick={reset}>
           С нуля
         </button>
       </div>
