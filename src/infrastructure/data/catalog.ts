@@ -65,22 +65,22 @@ export const PRESETS: readonly PresetBuild[] = [
   {
     id: "core",
     title: "Proxima Core",
-    tagline: "Игры в 1080p / 1440p",
-    purpose: "Сбалансированная сборка для игр и учёбы",
+    tagline: "Для игр в 1080p и 1440p",
+    purpose: "Тянет почти всё на высоких настройках, тихий и без переплат. Хороший вариант для первого игрового ПК или учёбы.",
     componentIds: ["cpu-7500f", "mb-b650m", "gpu-5060ti", "ram-d5-32", "ssd-nv3-1tb", "cool-pa120", "psu-650", "case-ch560"],
   },
   {
     id: "orbit",
     title: "Proxima Orbit",
-    tagline: "4K-гейминг и стриминг",
-    purpose: "Лучший игровой процессор и мощная видеокарта",
+    tagline: "Для 4K и стримов",
+    purpose: "Для тех, кто хочет играть в 4K или стримить без просадок. X3D-процессор и RTX 5070 Ti с запасом на пару лет.",
     componentIds: ["cpu-9800x3d", "mb-b650", "gpu-5070ti", "ram-d5-64", "ssd-990pro-2tb", "cool-lf360", "psu-850", "case-north"],
   },
   {
     id: "zenith",
     title: "Proxima Zenith",
-    tagline: "3D, ИИ и монтаж",
-    purpose: "Рабочая станция без компромиссов",
+    tagline: "Для 3D, монтажа и нейросетей",
+    purpose: "Когда компьютер зарабатывает деньги: рендер, монтаж 4K и локальные нейросети. Дорого, но время на рендере окупает.",
     componentIds: ["cpu-9950x3d", "mb-x870e", "gpu-5090", "ram-d5-96", "ssd-t705-2tb", "cool-galahad", "psu-1300", "case-o11v"],
   },
 ];

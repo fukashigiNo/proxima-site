@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { container } from "@/infrastructure/container";
-import { Reveal } from "@/presentation/components/motion/Reveal";
 import { PresetGrid } from "@/presentation/components/sections/Builds";
-import { Container, PageIntro } from "@/presentation/components/ui/Layout";
 import { LinkButton } from "@/presentation/components/ui/Button";
+import { Container, PageIntro } from "@/presentation/components/ui/Layout";
+import { BUSINESS } from "@/presentation/content/business";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/builds" },
   title: "Готовые сборки — Proxima Computers",
-  description: "Проверенные конфигурации ПК с ценами в тенге: заказать как есть или донастроить в конструкторе.",
+  description: "Готовые конфигурации ПК с ценами в тенге: заказать как есть или поменять детали в конструкторе.",
 };
 
 export default async function BuildsPage() {
@@ -17,15 +17,19 @@ export default async function BuildsPage() {
     <>
       <PageIntro
         eyebrow="Готовые сборки"
-        title="Проверенные конфигурации."
-        description="Каждая сборка совместима, сбалансирована и в наличии. Цена включает сборку, укладку кабелей и 72-часовой тест."
+        title="Готовые сборки"
+        description={`Мы сами подобрали эти конфигурации и собирали их не раз. Все детали есть в наличии, в цене уже сборка, укладка кабелей и тест под нагрузкой ${BUSINESS.testHours} часа.`}
       />
       <Container className="pb-24">
         <PresetGrid presets={presets} />
-        <Reveal className="hud-frame mt-12 flex flex-wrap items-center justify-between gap-4 rounded-panel bg-surface/60 px-8 py-8">
-          <p className="max-w-[560px] text-muted">Не нашли подходящую? Соберите свою из комплектующих в наличии — совместимость проверим автоматически.</p>
-          <LinkButton href="/builder" magnetic>Открыть конструктор</LinkButton>
-        </Reveal>
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-4">
+          <p className="max-w-[560px] text-muted">
+            Ни одна не подходит? Соберите свою из того, что есть в наличии, или просто напишите, что вам нужно.
+          </p>
+          <LinkButton href="/builder" variant="ghost">
+            Открыть конструктор
+          </LinkButton>
+        </div>
       </Container>
     </>
   );

@@ -92,9 +92,7 @@ export default function ProximaPage() {
       </Container>
 
       <Container className="pb-28 pt-16">
-        <Reveal className="glow-border rounded-panel">
-          <span className="glow-border-ring" aria-hidden />
-          <span className="glow-border-halo" aria-hidden />
+        <Reveal className="rounded-panel">
           <div className="grid gap-8 rounded-panel bg-surface/75 px-8 py-12 sm:px-12 md:grid-cols-[1fr_auto] md:items-center">
             <div className="grid gap-3">
               <p className="text-[clamp(26px,3vw,38px)] font-semibold leading-tight tracking-[-0.03em]">
@@ -103,10 +101,10 @@ export default function ProximaPage() {
               <p className="text-muted">Напишите нам «Проксима» в чате — нам будет приятно узнать, что вы её нашли.</p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <OrderButton selection={{}} magnetic>
+              <OrderButton selection={{}}>
                 Написать нам
               </OrderButton>
-              <LinkButton href="/" variant="ghost" magnetic>
+              <LinkButton href="/" variant="ghost">
                 Вернуться на Землю
               </LinkButton>
             </div>

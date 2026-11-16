@@ -24,8 +24,8 @@ export default async function OrderPage({ searchParams }: Props) {
     <BuildProvider initial={selection} initialTitle={parseTitle(title)}>
       <PageIntro
         eyebrow="Заявка"
-        title="Расскажите, что вам нужно."
-        description="Ответим в течение часа в рабочее время, уточним детали и зафиксируем цену."
+        title="Оставить заявку"
+        description="Напишите, как с вами связаться и что нужно. Ответим в рабочее время, уточним детали и зафиксируем цену."
       />
       <Container className="grid grid-cols-[minmax(0,1fr)] items-start gap-4 pb-24 md:grid-cols-2">
         <div className="animate-rise [animation-delay:240ms]">

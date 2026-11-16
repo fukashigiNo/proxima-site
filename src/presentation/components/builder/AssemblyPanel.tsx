@@ -25,14 +25,14 @@ export function AssemblyPanel() {
     <aside className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 lg:sticky lg:top-[84px]">
       <div className="relative">
         <PcSceneLazy
-          className="hud-frame h-[380px] rounded-panel bg-surface/50 lg:h-[min(56vh,520px)] lg:min-h-[360px]"
+          className="h-[380px] rounded-panel bg-surface/50 lg:h-[min(56vh,520px)] lg:min-h-[360px]"
           spec={spec}
           conflicts={summary.conflictCategories}
           activeCategory={activeCategory}
           onPartSelect={focus}
           autoRotate={false}
         />
-        <div className="pointer-events-none absolute bottom-3.5 left-4 flex flex-wrap gap-x-3.5 gap-y-1 font-mono text-[11px] text-muted [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1.5">
+        <div className="pointer-events-none absolute bottom-3.5 left-4 flex flex-wrap gap-x-3.5 gap-y-1 text-[12px] text-muted [&>span]:inline-flex [&>span]:items-center [&>span]:gap-1.5">
           <span><i className="size-2 rounded-full bg-accent" /> выбрано</span>
           <span><i className="size-2 rounded-full bg-danger" /> конфликт</span>
           <span><i className="size-2 rounded-full border border-dashed border-muted" /> не выбрано</span>

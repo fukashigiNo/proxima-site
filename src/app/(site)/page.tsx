@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { COMPONENT_CATEGORIES } from "@/domain/entities/PcComponent";
 import { container } from "@/infrastructure/container";
-import { Marquee } from "@/presentation/components/motion/Marquee";
 import { Reveal } from "@/presentation/components/motion/Reveal";
-import { TextReveal } from "@/presentation/components/motion/TextReveal";
-import { Tilt } from "@/presentation/components/motion/Tilt";
 import { OrderButton } from "@/presentation/components/order/OrderButton";
 import { Hero } from "@/presentation/components/sections/Hero";
+import { ReviewsSection, ShowcaseSection } from "@/presentation/components/sections/Social";
 import { LinkButton } from "@/presentation/components/ui/Button";
 import { Container, Section } from "@/presentation/components/ui/Layout";
+import { Note } from "@/presentation/components/ui/Note";
+import { BUSINESS } from "@/presentation/content/business";
 import { formatPrice } from "@/presentation/lib/format";
 import { BuildProvider } from "@/presentation/state/BuildContext";
 
@@ -21,32 +21,33 @@ export default async function HomePage() {
   const [presets, catalog] = await Promise.all([container.getPresetBuilds.execute(), container.getCatalog.execute()]);
   const showcase = presets.find((p) => p.id === SHOWCASE_PRESET) ?? presets[0];
   const minPrice = presets.length ? Math.min(...presets.map((p) => p.summary.total)) : null;
-  const brands = [...new Set(COMPONENT_CATEGORIES.flatMap((c) => catalog[c].map((item) => item.brand)))].sort();
-  const partsCount = COMPONENT_CATEGORIES.reduce((n, c) => n + catalog[c].length, 0);
+  const inStock = COMPONENT_CATEGORIES.reduce((n, c) => n + catalog[c].filter((item) => Object.values(item.stock).some((q) => q > 0)).length, 0);
 
-  const sections = [
+  const paths = [
     {
       href: "/builds",
-      index: "01",
-      title: "Готовые сборки",
-      text: `${presets.length} проверенные конфигурации — заказать как есть или донастроить.`,
+      title: "Взять готовую сборку",
+      text: "Если не хочется разбираться. Несколько проверенных вариантов под игры, учёбу и работу, любую можно поменять под себя.",
       meta: minPrice ? `от ${formatPrice(minPrice)}` : null,
     },
     {
       href: "/builder",
-      index: "02",
-      title: "Конструктор",
-      text: "Комплектующие в наличии в Алматы, Астане и Шымкенте. Проверка совместимости и 3D в реальном времени.",
-      meta: `${partsCount} позиций`,
+      title: "Собрать самому",
+      text: "Выбираете детали из того, что есть в наличии, а конструктор сразу подсказывает, если что-то не подходит друг к другу.",
+      meta: `${inStock} позиций в наличии`,
     },
     {
       href: "/process",
-      index: "03",
-      title: "Как мы работаем",
-      text: "Консультация, подбор, ручная сборка и 72 часа стресс-тестов перед выдачей.",
-      meta: "4 шага",
+      title: "Сначала узнать, как всё устроено",
+      text: "Сроки, гарантия, оплата и ответы на вопросы, которые нам задают чаще всего.",
+      meta: null,
     },
   ];
+
+  const experience = [
+    BUSINESS.since && `Собираем с ${BUSINESS.since} года`,
+    BUSINESS.buildsDone && `${BUSINESS.buildsDone}+ компьютеров уже у владельцев`,
+  ].filter(Boolean);
 
   return (
     <>
@@ -54,81 +55,77 @@ export default async function HomePage() {
         <Hero presetId={showcase?.id} />
       </BuildProvider>
 
-      <div className="border-y border-line bg-surface/50 py-6">
-        <Marquee duration={38}>
-          {brands.map((brand) => (
-            <span key={brand} className="flex items-center gap-10 pr-10 font-mono text-[15px] uppercase tracking-[0.18em] text-muted">
-              {brand}
-              <span className="size-1.5 rotate-45 bg-accent/70" aria-hidden />
-            </span>
-          ))}
-        </Marquee>
-      </div>
-
       <Section>
-        <Container>
-          <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
-            <TextReveal
-              text="Всё, что нужно для сильного ПК."
-              accent={["сильного"]}
-              className="max-w-[720px] text-[clamp(32px,4.5vw,60px)] font-semibold leading-[1.02] tracking-[-0.04em]"
-            />
-            <p className="max-w-[340px] text-muted">Выберите, с чего начать — готовая конфигурация, свой конструктор или консультация.</p>
-          </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {sections.map((s, i) => (
-              <Reveal key={s.href} delay={i * 110} className="grid">
-                <Tilt className="grid rounded-panel">
-                  <Link
-                    href={s.href}
-                    className="group grid min-h-[300px] content-between gap-10 rounded-panel border border-line bg-surface/60 p-8 text-ink no-underline transition-colors duration-300 hover:border-line-strong"
-                  >
-                    <div className="grid gap-4">
-                      <span className="font-mono text-[12px] tracking-[0.14em] text-accent-2">[ {s.index} ]</span>
-                      <h3 className="text-[28px] font-semibold tracking-[-0.03em]">{s.title}</h3>
-                      <p className="leading-normal text-muted">{s.text}</p>
-                    </div>
-                    <div className="flex items-center justify-between font-mono text-[13px] text-muted">
-                      <span>{s.meta}</span>
-                      <span
-                        className="grid size-10 place-items-center rounded-full border border-line-strong text-base text-ink transition-[background-color,color,border-color,translate,box-shadow] duration-300 group-hover:translate-x-1 group-hover:border-accent group-hover:bg-accent group-hover:text-on-accent group-hover:shadow-[0_0_24px_var(--glow)]"
-                        aria-hidden
-                      >
-                        →
-                      </span>
-                    </div>
-                  </Link>
-                </Tilt>
-              </Reveal>
-            ))}
-          </div>
+        <Container className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
+          <h2 className="text-[clamp(28px,3.4vw,46px)] font-semibold leading-[1.08] tracking-[-0.035em]">
+            Как это выглядит с&nbsp;вашей стороны
+          </h2>
+          <Reveal className="grid max-w-[640px] gap-5 text-[17px] leading-relaxed text-muted">
+            <p>
+              Вы рассказываете, для чего нужен компьютер и сколько готовы потратить. Мы подбираем железо, проверяем, что всё
+              друг с другом дружит, и присылаем список с ценами. Если согласны, собираем.
+            </p>
+            <p>
+              Дальше аккуратно укладываем кабели, обновляем BIOS, ставим систему и драйверы и оставляем компьютер на стенде под
+              нагрузкой. Если на тесте что-то греется или сбоит, вы об этом не узнаете: деталь поменяем до выдачи.
+            </p>
+            {experience.length > 0 && <p className="text-ink">{experience.join(". ")}.</p>}
+          </Reveal>
         </Container>
       </Section>
 
-      <Container className="pb-28">
-        <Reveal className="glow-border rounded-panel">
-          <span className="glow-border-ring" aria-hidden />
-          <span className="glow-border-halo" aria-hidden />
-          <div className="grid gap-8 overflow-hidden rounded-panel bg-surface/75 px-8 py-14 sm:px-14 md:grid-cols-[1fr_auto] md:items-center">
-            <div className="grid gap-4">
-              <TextReveal
-                text="Соберём ПК мечты за 48 часов."
-                accent={["мечты"]}
-                className="text-[clamp(30px,4vw,52px)] font-semibold leading-[1.02] tracking-[-0.04em]"
-              />
-              <p className="max-w-[520px] text-muted">Оставьте заявку — ответим в течение часа, подберём конфигурацию и зафиксируем цену.</p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <OrderButton selection={{}} magnetic>
-                Оставить заявку
-              </OrderButton>
-              <LinkButton href="/builder" variant="ghost" magnetic>
-                Конструктор
-              </LinkButton>
-            </div>
+      <Section className="pt-0 sm:pt-0">
+        <Container>
+          <h2 className="mb-6 text-[clamp(24px,2.6vw,32px)] font-semibold tracking-[-0.03em]">С чего начать</h2>
+          <ul className="border-t border-line">
+            {paths.map((p) => (
+              <li key={p.href} className="border-b border-line">
+                <Link
+                  href={p.href}
+                  className="group grid gap-2 py-7 text-ink no-underline sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] sm:items-baseline sm:gap-10"
+                >
+                  <span className="text-[22px] font-semibold tracking-[-0.02em] transition-colors group-hover:text-accent">{p.title}</span>
+                  <span className="text-muted">{p.text}</span>
+                  <span className="flex items-center gap-3 whitespace-nowrap text-[14px] text-muted">
+                    {p.meta}
+                    <span className="text-ink transition-transform group-hover:translate-x-1" aria-hidden>
+                      →
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </Section>
+
+      <ShowcaseSection />
+      <ReviewsSection />
+
+      <Section>
+        <Container className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+          <div className="grid max-w-[620px] gap-4">
+            <h2 className="text-[clamp(28px,3.4vw,44px)] font-semibold leading-[1.08] tracking-[-0.035em]">
+              Не знаете, что выбрать? Просто напишите
+            </h2>
+            <p className="text-[17px] leading-relaxed text-muted">
+              Опишите своими словами, во что играете или в чём работаете. Ответим {BUSINESS.replyTime} и предложим пару
+              вариантов под ваш бюджет.
+            </p>
           </div>
-        </Reveal>
-      </Container>
+          <div className="relative flex flex-wrap gap-3">
+            <OrderButton selection={{}}>Написать нам</OrderButton>
+            <LinkButton href="/builder" variant="ghost">
+              Открыть конструктор
+            </LinkButton>
+            <span className="absolute -top-12 right-0 max-md:hidden">
+              <Note arrow="down-left" rotate={4}>
+                отвечаем живые люди
+              </Note>
+            </span>
+          </div>
+        </Container>
+      </Section>
     </>
   );
 }
