@@ -9,13 +9,10 @@ import { cn } from "@/presentation/lib/cn";
 const INPUT =
   "h-9 w-full rounded-lg border border-line bg-bg px-2.5 text-right font-mono text-sm text-ink outline-none transition-colors focus:border-ink aria-invalid:border-danger";
 
-/** Строка каталога с правкой цены и остатков; сохраняется серверным действием. */
 export function OfferRow({ component }: { component: PcComponent }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(updateOffer, {});
   const [dirty, setDirty] = useState(false);
 
-  // Отправка вручную, а не через <form action>: React 19 сбрасывает форму после action,
-  // и при ошибке валидации введённые значения терялись бы.
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);

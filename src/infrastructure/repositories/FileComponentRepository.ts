@@ -3,7 +3,6 @@ import type { PcComponent } from "@/domain/entities/PcComponent";
 import type { ComponentRepository } from "@/domain/repositories/ComponentRepository";
 import type { JsonFileStore } from "../persistence/JsonFileStore";
 
-/** Каталог в JSON-файле; при первом запуске заполняется из демо-каталога. */
 export class FileComponentRepository implements ComponentRepository {
   constructor(private readonly store: JsonFileStore<PcComponent[]>) {}
 

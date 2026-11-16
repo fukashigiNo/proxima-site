@@ -16,7 +16,6 @@ import { Button } from "../ui/Button";
 import { Check, Field, FormSection, FormStatus, NumberInput, Select, TextArea, TextInput, opts } from "./fields";
 import { useFormAction } from "./useFormAction";
 
-/** Значение поля любой категории — для defaultValue без «распаковки» объединения типов. */
 const read = (c: PcComponent | undefined, key: string): unknown => (c as unknown as Record<string, unknown> | undefined)?.[key];
 const val = (c: PcComponent | undefined, key: string, fallback: string | number = "") => {
   const v = read(c, key);
@@ -37,7 +36,6 @@ interface Props {
   created?: boolean;
 }
 
-/** Создание и полное редактирование позиции каталога; набор полей зависит от категории. */
 export function ComponentForm({ component, defaultCategory = "cpu", usedInPresets = [], created }: Props) {
   const isEdit = Boolean(component);
   const [category, setCategory] = useState<ComponentCategory>(component?.category ?? defaultCategory);
@@ -96,7 +94,6 @@ export function ComponentForm({ component, defaultCategory = "cpu", usedInPreset
           </div>
         </FormSection>
 
-        {/* key сбрасывает поля при смене категории в форме создания */}
         <FormSection key={category} title="Параметры для совместимости и 3D">
           <div className="grid gap-4 sm:grid-cols-2">
             {(category === "cpu" || category === "motherboard") && (

@@ -1,7 +1,6 @@
 import type { PcComponent } from "@/domain/entities/PcComponent";
 import type { ComponentRepository } from "@/domain/repositories/ComponentRepository";
 
-/** Каталог в памяти — для тестов и демо. */
 export class InMemoryComponentRepository implements ComponentRepository {
   private components: PcComponent[];
 

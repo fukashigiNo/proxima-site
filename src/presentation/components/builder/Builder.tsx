@@ -18,7 +18,6 @@ interface Props {
   presets: PresetBuildView[];
 }
 
-/** Конструктор: композиция независимых блоков, общее состояние — в BuildContext. */
 export function Builder({ catalog, presets }: Props) {
   const { activeCategory, selection } = useBuild();
   const [filter, setFilter] = useState<OfferFilter>(DEFAULT_FILTER);
@@ -37,7 +36,7 @@ export function Builder({ catalog, presets }: Props) {
         <Toolbar filter={filter} onFilterChange={setFilter} presets={presets} />
         <CategoryTabs />
         {previewed && <Inspector component={previewed} city={filter.city} />}
-        <OfferList offers={offers} city={filter.city} onInspect={setInspected} />
+        <OfferList key={activeCategory} offers={offers} city={filter.city} onInspect={setInspected} />
       </div>
     </Container>
   );

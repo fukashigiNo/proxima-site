@@ -13,7 +13,6 @@ import { Button } from "../ui/Button";
 import { Field, FormSection, FormStatus, Select, TextInput } from "./fields";
 import { useFormAction } from "./useFormAction";
 
-/** Редактор готовой сборки: та же доменная проверка совместимости, что на сайте, — прямо в форме. */
 export function PresetForm({ catalog, preset }: { catalog: Catalog; preset?: PresetBuild }) {
   const [ids, setIds] = useState<Partial<Record<ComponentCategory, string>>>(() => {
     const all: PcComponent[] = Object.values(catalog).flat();

@@ -5,12 +5,10 @@ import { changeRequestStatus, type ActionState } from "@/app/admin/actions";
 import { REQUEST_STATUS_LABELS, nextStatuses, type RequestStatus } from "@/domain/entities/BuildRequest";
 import { cn } from "@/presentation/lib/cn";
 
-/** Кнопки допустимых переходов статуса — недопустимые не показываются вовсе. */
 export function StatusControl({ id, status }: { id: string; status: RequestStatus }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(changeRequestStatus, {});
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {/* Отдельная форма на каждый переход: значение передаётся скрытым полем, а не через submitter */}
       {nextStatuses(status).map((to) => (
         <form key={to} action={action}>
           <input type="hidden" name="id" value={id} />

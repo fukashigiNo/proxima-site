@@ -1,7 +1,6 @@
 import type { BuildRequest } from "@/domain/entities/BuildRequest";
 import type { BuildRequestRepository } from "@/domain/repositories/BuildRequestRepository";
 
-/** Хранилище заявок в памяти — для тестов и демо. */
 export class InMemoryBuildRequestRepository implements BuildRequestRepository {
   private items: BuildRequest[] = [];
 
