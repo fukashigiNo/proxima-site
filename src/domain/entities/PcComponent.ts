@@ -24,7 +24,6 @@ export const CITY_LABELS: Record<City, string> = {
   shymkent: "Шымкент",
 };
 
-/** Остатки по городам Казахстана, шт. */
 export type Stock = Readonly<Partial<Record<City, number>>>;
 
 interface BaseComponent<C extends ComponentCategory> {
@@ -32,9 +31,7 @@ interface BaseComponent<C extends ComponentCategory> {
   readonly category: C;
   readonly brand: string;
   readonly name: string;
-  /** Цена в тенге */
   readonly price: number;
-  /** Потребление в ваттах (TDP / TBP) */
   readonly powerDraw: number;
   readonly specs: Readonly<Record<string, string>>;
   readonly stock: Stock;
@@ -84,7 +81,6 @@ export interface PcCase extends BaseComponent<"case"> {
   readonly color: "black" | "white";
 }
 
-/** Комплектующее ПК — размеченное объединение по категории. */
 export type PcComponent = Cpu | Motherboard | Gpu | Ram | Storage | Cooling | Psu | PcCase;
 
 export type ComponentOf<C extends ComponentCategory> = Extract<PcComponent, { category: C }>;

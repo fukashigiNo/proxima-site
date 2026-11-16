@@ -14,7 +14,6 @@ export class FileBuildRequestRepository implements BuildRequestRepository {
     return (await this.store.read()).find((r) => r.id === id) ?? null;
   }
 
-  /** Создаёт или обновляет заявку */
   async save(request: BuildRequest) {
     await this.store.update((all) =>
       all.some((r) => r.id === request.id) ? all.map((r) => (r.id === request.id ? request : r)) : [...all, request],

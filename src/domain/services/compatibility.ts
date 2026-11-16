@@ -7,13 +7,10 @@ export interface CompatibilityIssue {
   readonly rule: string;
   readonly severity: IssueSeverity;
   readonly message: string;
-  /** Категории, участвующие в конфликте — для подсветки в UI и 3D */
   readonly categories: readonly ComponentCategory[];
 }
 
-/** Запас мощности БП относительно пикового потребления системы */
 export const PSU_HEADROOM = 1.3;
-/** Базовое потребление платы, вентиляторов, периферии */
 const BASE_SYSTEM_DRAW = 75;
 
 export const estimatePowerDraw = (selection: BuildSelection): number =>
@@ -27,7 +24,6 @@ export const totalPrice = (selection: BuildSelection): number =>
 export const missingCategories = (selection: BuildSelection): ComponentCategory[] =>
   COMPONENT_CATEGORIES.filter((category) => !selection[category]);
 
-/** Правило совместимости — чистая функция от сборки. */
 type Rule = (selection: BuildSelection) => CompatibilityIssue | null;
 
 const issue = (
@@ -100,6 +96,5 @@ const RULES: readonly Rule[] = [
 export const checkCompatibility = (selection: BuildSelection): CompatibilityIssue[] =>
   RULES.map((rule) => rule(selection)).filter((i): i is CompatibilityIssue => i !== null);
 
-/** Проблемы, которые появятся, если поставить кандидата в сборку (касающиеся именно его). */
 export const issuesForCandidate = (selection: BuildSelection, candidate: PcComponent): CompatibilityIssue[] =>
   checkCompatibility(selectComponent(selection, candidate)).filter((i) => i.categories.includes(candidate.category));

@@ -1,7 +1,3 @@
-/**
- * Подписанная сессия администратора: `base64url(payload).base64url(HMAC-SHA256)`.
- * Только Web Crypto — модуль работает и в middleware (Edge), и в Node.
- */
 export const SESSION_COOKIE = "px_admin";
 export const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 
@@ -18,7 +14,6 @@ const toBase64Url = (bytes: Uint8Array) =>
 const fromBase64Url = (value: string) =>
   Uint8Array.from(atob(value.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
 
-/** Секрет подписи из окружения; без него админка выключена. */
 export const sessionSecret = () => {
   const secret = process.env.ADMIN_SESSION_SECRET;
   return secret && secret.length >= 32 ? secret : null;
@@ -39,7 +34,6 @@ export async function verifySessionToken(token: string | undefined, secret: stri
   const [body, signature] = token.split(".");
   if (!body || !signature) return false;
   try {
-    // verify сравнивает подпись за постоянное время
     const valid = await crypto.subtle.verify("HMAC", await hmacKey(secret), fromBase64Url(signature), encoder.encode(body));
     if (!valid) return false;
     const payload = JSON.parse(new TextDecoder().decode(fromBase64Url(body))) as SessionPayload;

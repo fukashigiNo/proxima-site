@@ -10,6 +10,7 @@ import { GetCatalog } from "@/application/use-cases/GetCatalog";
 import { GetPresetBuilds } from "@/application/use-cases/GetPresetBuilds";
 import { ResolveBuild } from "@/application/use-cases/ResolveBuild";
 import { SubmitBuildRequest } from "@/application/use-cases/SubmitBuildRequest";
+import { SubmitMessengerRequest } from "@/application/use-cases/SubmitMessengerRequest";
 import type { PresetBuild } from "@/domain/entities/Build";
 import type { BuildRequest } from "@/domain/entities/BuildRequest";
 import type { PcComponent } from "@/domain/entities/PcComponent";
@@ -19,11 +20,6 @@ import { FileBuildRequestRepository } from "./repositories/FileBuildRequestRepos
 import { FileComponentRepository } from "./repositories/FileComponentRepository";
 import { FilePresetRepository } from "./repositories/FilePresetRepository";
 
-/**
- * Composition root: единственное место, где связываются реализации и use cases.
- * Данные лежат в JSON-файлах (папка DATA_DIR, по умолчанию ./data); для продакшна
- * достаточно заменить File*Repository на реализации поверх БД.
- */
 const componentRepository = new FileComponentRepository(
   new JsonFileStore<PcComponent[]>(dataPath("components.json"), () => [...COMPONENTS]),
 );
@@ -33,15 +29,15 @@ const presetRepository = new FilePresetRepository(
 const buildRequestRepository = new FileBuildRequestRepository(
   new JsonFileStore<BuildRequest[]>(dataPath("requests.json"), () => []),
 );
+const newRequestId = () => `PX-${randomUUID().slice(0, 8).toUpperCase()}`;
 const listBuildRequests = new ListBuildRequests(buildRequestRepository, componentRepository);
 
 export const container = {
   getCatalog: new GetCatalog(componentRepository),
   getPresetBuilds: new GetPresetBuilds(componentRepository, presetRepository),
   resolveBuild: new ResolveBuild(componentRepository),
-  submitBuildRequest: new SubmitBuildRequest(buildRequestRepository, componentRepository, () =>
-    `PX-${randomUUID().slice(0, 8).toUpperCase()}`,
-  ),
+  submitBuildRequest: new SubmitBuildRequest(buildRequestRepository, componentRepository, newRequestId),
+  submitMessengerRequest: new SubmitMessengerRequest(buildRequestRepository, componentRepository, newRequestId),
   admin: {
     listBuildRequests,
     changeRequestStatus: new ChangeRequestStatus(buildRequestRepository),

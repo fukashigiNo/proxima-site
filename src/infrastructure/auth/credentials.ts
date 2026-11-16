@@ -1,7 +1,6 @@
 import "server-only";
 import { createHash, timingSafeEqual } from "node:crypto";
 
-/** Сравнение пароля за постоянное время (через хэши одинаковой длины). */
 export function checkAdminPassword(candidate: string): boolean {
   const expected = process.env.ADMIN_PASSWORD;
   if (!expected) return false;
@@ -13,7 +12,6 @@ export function checkAdminPassword(candidate: string): boolean {
 export const isAdminConfigured = () =>
   Boolean(process.env.ADMIN_PASSWORD && (process.env.ADMIN_SESSION_SECRET?.length ?? 0) >= 32);
 
-/** Простой лимит попыток входа на процесс: 5 неудач за 15 минут с одного адреса. */
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
 const failures = new Map<string, number[]>();

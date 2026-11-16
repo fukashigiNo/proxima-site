@@ -4,14 +4,8 @@ import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-/**
- * Простое файловое хранилище JSON: атомарная запись (tmp + rename) и последовательная
- * очередь операций, чтобы параллельные запросы не перетирали друг друга.
- * Подходит для одного инстанса; для масштабирования замените репозитории на БД.
- */
 export class JsonFileStore<T> {
   private queue: Promise<unknown> = Promise.resolve();
-  /** Первичное заполнение выполняется один раз, даже если файл читают параллельно */
   private seeding: Promise<T> | null = null;
 
   constructor(
@@ -29,7 +23,6 @@ export class JsonFileStore<T> {
         try {
           await this.write(initial);
         } catch (writeError) {
-          // Файловая система только для чтения: отдаём исходные данные, чтобы сайт продолжал работать
           console.warn(`[JsonFileStore] не удалось сохранить ${this.filePath}:`, (writeError as Error).message);
         }
         return initial;
@@ -40,7 +33,6 @@ export class JsonFileStore<T> {
     }
   }
 
-  /** Читает, изменяет и сохраняет данные в рамках одной операции очереди. */
   update(mutate: (data: T) => T): Promise<T> {
     const run = this.queue.then(async () => {
       const next = mutate(await this.read());
@@ -59,10 +51,6 @@ export class JsonFileStore<T> {
   }
 }
 
-/**
- * Каталог данных: DATA_DIR, иначе ./data. На Vercel папка проекта только для чтения,
- * поэтому там используется временный каталог — данные живут, пока жив инстанс функции.
- */
 const dataDir = () => process.env.DATA_DIR ?? (process.env.VERCEL ? path.join(tmpdir(), "proxima-data") : path.join(process.cwd(), "data"));
 
 export const dataPath = (file: string) => path.join(dataDir(), file);
