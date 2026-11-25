@@ -6,6 +6,7 @@ import { cn } from "@/presentation/lib/cn";
 import { useNearViewport } from "@/presentation/hooks/useNearViewport";
 import { useUserActivation } from "@/presentation/hooks/useUserActivation";
 import type PcSceneType from "./PcScene";
+import { SceneBoundary } from "./SceneBoundary";
 
 const PcScene = dynamic(() => import("./PcScene"), { ssr: false, loading: () => <ScenePlaceholder /> });
 
@@ -29,7 +30,13 @@ export function PcSceneLazy({ className, ...props }: ComponentProps<typeof PcSce
   const activated = useUserActivation();
   return (
     <div ref={ref} className={cn("relative", className)}>
-      {near && activated ? <PcScene {...props} className="size-full" /> : <ScenePlaceholder />}
+      {near && activated ? (
+        <SceneBoundary fallback={<ScenePlaceholder />}>
+          <PcScene {...props} className="size-full" />
+        </SceneBoundary>
+      ) : (
+        <ScenePlaceholder />
+      )}
     </div>
   );
 }

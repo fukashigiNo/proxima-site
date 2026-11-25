@@ -1,42 +1,50 @@
 "use client";
 
-import { useEffect } from "react";
+import type Lenis from "lenis";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "./observer";
 import { ProximaBeacon } from "./ProximaBeacon";
 import { Starfield } from "./Starfield";
 
 export function Ambient() {
+  const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;
     if (!fine || prefersReducedMotion()) return;
 
-    let destroy: (() => void) | undefined;
     let cancelled = false;
+    let raf = 0;
     const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 200));
     idle(async () => {
-      const { default: Lenis } = await import("lenis");
+      const { default: LenisClass } = await import("lenis");
       if (cancelled) return;
-      const lenis = new Lenis({
+      const lenis = new LenisClass({
         lerp: 0.085,
         wheelMultiplier: 0.9,
         anchors: true,
-        prevent: (node) => node.closest?.("canvas, [data-lenis-prevent]") != null,
+        prevent: (node) => node.closest?.("[data-lenis-prevent]") != null,
       });
-      let raf = requestAnimationFrame(function tick(time) {
+      lenisRef.current = lenis;
+      raf = requestAnimationFrame(function tick(time) {
         lenis.raf(time);
         raf = requestAnimationFrame(tick);
       });
-      destroy = () => {
-        cancelAnimationFrame(raf);
-        lenis.destroy();
-      };
     });
 
     return () => {
       cancelled = true;
-      destroy?.();
+      cancelAnimationFrame(raf);
+      lenisRef.current?.destroy();
+      lenisRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    lenisRef.current?.scrollTo(0, { immediate: true, force: true });
+  }, [pathname]);
 
   return (
     <>

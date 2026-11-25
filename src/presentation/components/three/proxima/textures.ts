@@ -58,8 +58,8 @@ function sphereTexture(width: number, paint: (p: [number, number, number], lon: 
   return texture;
 }
 
-export function proximaDTexture() {
-  return sphereTexture(384, ([x, y, z]) => {
+export function proximaDTexture(scale = 1) {
+  return sphereTexture(Math.round(256 * scale), ([x, y, z]) => {
     const n = fbm(x * 3 + 7, y * 3, z * 3, 5);
     const crater = fbm(x * 9, y * 9 + 3, z * 9, 2);
     let c = mix([52, 40, 36], [128, 86, 62], clamp01((n - 0.35) * 2.2));
@@ -69,8 +69,8 @@ export function proximaDTexture() {
   });
 }
 
-export function proximaBTexture() {
-  return sphereTexture(768, ([x, y, z]) => {
+export function proximaBTexture(scale = 1) {
+  return sphereTexture(Math.round(512 * scale), ([x, y, z]) => {
     const n = fbm(x * 4 + 11, y * 4, z * 4, 5);
     const detail = fbm(x * 12 + 3, y * 12, z * 12, 3);
     const toStar = clamp01(x);
@@ -86,8 +86,8 @@ export function proximaBTexture() {
   });
 }
 
-export function proximaCTexture() {
-  return sphereTexture(512, ([x, y, z], _lon, lat) => {
+export function proximaCTexture(scale = 1) {
+  return sphereTexture(Math.round(384 * scale), ([x, y, z], _lon, lat) => {
     const warp = fbm(x * 2.5, y * 2.5 + 4, z * 2.5, 4);
     const bands = 0.5 + 0.5 * Math.sin(lat * 9 + warp * 4);
     const haze = fbm(x * 5 + 2, y * 5, z * 5, 4);

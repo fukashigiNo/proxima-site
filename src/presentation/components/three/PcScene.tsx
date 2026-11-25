@@ -5,6 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import { useRef, useState, type PointerEvent } from "react";
 import { CATEGORY_LABELS, type ComponentCategory } from "@/domain/entities/PcComponent";
 import { useInView } from "@/presentation/hooks/useInView";
+import { useVerticalTouchScroll } from "@/presentation/hooks/useVerticalTouchScroll";
 import { PcModel, type PcModelProps } from "./PcModel";
 import { ExplodeProvider, type ExplodeSource } from "./parts/ScrollExplode";
 import { SoftShadow } from "./parts/SoftShadow";
@@ -21,6 +22,7 @@ export default function PcScene({ autoRotate = true, className, explode, ...mode
   const container = useRef<HTMLDivElement>(null);
   const tooltip = useRef<HTMLSpanElement>(null);
   const inView = useInView(container);
+  useVerticalTouchScroll(container);
   const [hovered, setHovered] = useState<ComponentCategory | null>(null);
 
   const moveTooltip = (event: PointerEvent<HTMLDivElement>) => {

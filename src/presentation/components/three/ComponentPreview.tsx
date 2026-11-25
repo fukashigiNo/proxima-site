@@ -5,6 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import { useRef } from "react";
 import type { PcComponent } from "@/domain/entities/PcComponent";
 import { useInView } from "@/presentation/hooks/useInView";
+import { useVerticalTouchScroll } from "@/presentation/hooks/useVerticalTouchScroll";
 import { ComponentModel } from "./ComponentModel";
 import { Normalize } from "./parts/Normalize";
 import { ResponsiveCamera } from "./ResponsiveCamera";
@@ -18,6 +19,7 @@ interface Props {
 export default function ComponentPreview({ component, className }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const inView = useInView(container);
+  useVerticalTouchScroll(container);
 
   return (
     <div ref={container} className={className} style={{ cursor: "grab" }}>

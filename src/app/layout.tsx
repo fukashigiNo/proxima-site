@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Caveat, Inter, JetBrains_Mono } from "next/font/google";
+import { Caveat, Onest } from "next/font/google";
 import { THEME_INIT_SCRIPT } from "@/presentation/theme/theme";
 import "./globals.css";
 import { SITE_URL } from "./siteUrl";
 
-const sans = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter", display: "swap" });
-const mono = JetBrains_Mono({ subsets: ["latin", "cyrillic"], variable: "--font-jetbrains", display: "swap" });
+const sans = Onest({ subsets: ["latin", "cyrillic"], variable: "--font-onest", display: "swap" });
 const hand = Caveat({ subsets: ["latin", "cyrillic"], weight: "600", variable: "--font-caveat", display: "swap", preload: false });
 
 export const metadata: Metadata = {
@@ -29,7 +28,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className={`${sans.variable} ${mono.variable} ${hand.variable}`} suppressHydrationWarning>
+    <html lang="ru" className={`${sans.variable} ${hand.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>

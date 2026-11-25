@@ -3,17 +3,22 @@
 import { AnimatePresence, useMotionValueEvent, useScroll, useSpring, useTransform } from "motion/react";
 import * as m from "motion/react-m";
 import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useInView } from "@/presentation/hooks/useInView";
+import { useResolvedTheme } from "@/presentation/theme/useResolvedTheme";
+import { SceneBoundary } from "../three/SceneBoundary";
 import { SHOT_INFO } from "../three/proxima/shots";
 import { CountUp } from "../motion/CountUp";
 
+const SceneGlow = () => (
+  <div className="absolute inset-0 grid place-items-center">
+    <span className="size-24 rounded-full bg-[#ff6a3a]/50 blur-2xl" />
+  </div>
+);
+
 const ProximaSystemScene = dynamic(() => import("../three/proxima/ProximaSystemScene"), {
   ssr: false,
-  loading: () => (
-    <div className="grid size-full place-items-center">
-      <span className="size-24 rounded-full bg-accent/40 blur-2xl" />
-    </div>
-  ),
+  loading: SceneGlow,
 });
 
 export interface JourneyStation {
@@ -35,6 +40,10 @@ const dwell = (v: number, n: number) => {
 
 export function ProximaJourney({ stations }: { stations: JourneyStation[] }) {
   const section = useRef<HTMLElement>(null);
+  const inView = useInView(section, "0px");
+  const theme = useResolvedTheme();
+  const [motionOk, setMotionOk] = useState(true);
+  useEffect(() => setMotionOk(!window.matchMedia("(prefers-reduced-motion: reduce)").matches), []);
   const n = stations.length;
   const [active, setActive] = useState(0);
 
@@ -51,12 +60,16 @@ export function ProximaJourney({ stations }: { stations: JourneyStation[] }) {
   const info = SHOT_INFO[active];
   const Heading = station.primary ? "h1" : "h2";
 
-  return (
-    <section ref={section} className="relative -mt-[var(--header-h)]" style={{ height: `${n * 70 + 100}vh` }} aria-label="Система Проксимы">
-      <div className="sticky top-0 h-dvh overflow-hidden">
-        <ProximaSystemScene progress={progress} className="!absolute inset-0" />
+  if (!motionOk) return null;
 
-        <div className="pointer-events-none absolute inset-0 [background:linear-gradient(90deg,rgba(7,9,12,0.85)_0%,rgba(7,9,12,0.5)_30%,transparent_55%)] max-lg:[background:linear-gradient(0deg,rgba(7,9,12,0.92)_0%,rgba(7,9,12,0.6)_40%,transparent_65%)]" />
+  return (
+    <section ref={section} className="relative -mt-[var(--header-h)] text-ink" style={{ height: `${n * 70 + 100}vh` }} aria-label="Система Проксимы">
+      <div className="sticky top-0 h-svh overflow-hidden">
+        <SceneBoundary fallback={<SceneGlow />}>
+          <ProximaSystemScene progress={progress} active={inView} light={theme === "light"} className="!absolute inset-0" />
+        </SceneBoundary>
+
+        <div className="pointer-events-none absolute inset-0 [background:linear-gradient(90deg,color-mix(in_srgb,var(--bg)_85%,transparent)_0%,color-mix(in_srgb,var(--bg)_50%,transparent)_30%,transparent_55%)] max-lg:[background:linear-gradient(0deg,color-mix(in_srgb,var(--bg)_92%,transparent)_0%,color-mix(in_srgb,var(--bg)_60%,transparent)_40%,transparent_65%)]" />
 
         <div className="pointer-events-none absolute right-4 top-[calc(var(--header-h)+12px)] text-right font-mono text-[11px] uppercase tracking-[0.12em] sm:right-8">
           <AnimatePresence mode="wait">

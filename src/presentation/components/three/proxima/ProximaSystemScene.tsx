@@ -4,6 +4,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AdditiveBlending,
+  NormalBlending,
   BufferGeometry,
   Float32BufferAttribute,
   type Group,
@@ -39,7 +40,17 @@ const DWELL_EPS = 1e-4;
 
 const MAX_RECOVERIES = 3;
 
-export default function ProximaSystemScene({ progress, className }: { progress: ProgressSource; className?: string }) {
+export default function ProximaSystemScene({
+  progress,
+  className,
+  active = true,
+  light = false,
+}: {
+  progress: ProgressSource;
+  className?: string;
+  active?: boolean;
+  light?: boolean;
+}) {
   const [generation, setGeneration] = useState(0);
   const [compact, setCompact] = useState(false);
 
@@ -69,19 +80,20 @@ export default function ProximaSystemScene({ progress, className }: { progress: 
   return (
     <Canvas
       key={generation}
+      frameloop={active ? "always" : "never"}
       className={className}
       dpr={compact ? [1, 1.25] : [1, 1.5]}
       camera={{ position: SHOTS[0].kind === "fixed" ? SHOTS[0].position : [0, 6, 15], fov: 42, near: 0.05, far: 400 }}
       gl={{ antialias: !compact, alpha: true, powerPreference: compact ? "default" : "high-performance" }}
       onCreated={watchContext}
     >
-      <ambientLight intensity={0.05} />
+      <ambientLight intensity={light ? 0.35 : 0.05} color={light ? "#e9e4ff" : "#ffffff"} />
       <pointLight position={[0, 0, 0]} intensity={34} decay={1.15} distance={0} color="#ffb08a" />
-      <Star />
-      <Planets />
+      <Star light={light} />
+      <Planets textureScale={compact ? 0.6 : 1} light={light} />
       <CameraRig progress={progress} />
-      <DustBelt />
-      <AlphaCentauri />
+      <DustBelt light={light} />
+      <AlphaCentauri light={light} />
     </Canvas>
   );
 }
@@ -135,7 +147,7 @@ const flareAt = (t: number) => {
   return local < 0.25 ? local / 0.25 : Math.exp(-(local - 0.25) * 1.6);
 };
 
-function Star() {
+function Star({ light }: { light: boolean }) {
   const material = useRef<ShaderMaterial>(null);
   const corona = useRef<Sprite>(null);
   const halo = useRef<Sprite>(null);
@@ -162,19 +174,20 @@ function Star() {
         <shaderMaterial ref={material} uniforms={uniforms} vertexShader={STAR_VERTEX} fragmentShader={STAR_FRAGMENT} />
       </mesh>
       <sprite ref={corona}>
-        <spriteMaterial map={coronaTexture} blending={AdditiveBlending} depthWrite={false} transparent />
+        <spriteMaterial map={coronaTexture} blending={light ? NormalBlending : AdditiveBlending} depthWrite={false} transparent opacity={light ? 0.75 : 1} />
       </sprite>
       <sprite ref={halo}>
-        <spriteMaterial map={haloTexture} blending={AdditiveBlending} depthWrite={false} transparent opacity={0.8} />
+        <spriteMaterial map={haloTexture} blending={light ? NormalBlending : AdditiveBlending} depthWrite={false} transparent opacity={light ? 0.55 : 0.8} />
       </sprite>
     </group>
   );
 }
 
-function Planets() {
+function Planets({ textureScale, light }: { textureScale: number; light: boolean }) {
   const refs = useRef<{ group: Group | null }[]>(PLANETS.map(() => ({ group: null })));
   const spinners = useRef<(Mesh | null)[]>([]);
-  const textures = useMemo<Texture[]>(() => PLANETS.map((p) => p.texture()), []);
+  const textures = useMemo<Texture[]>(() => PLANETS.map((p) => p.texture(textureScale)), [textureScale]);
+  useEffect(() => () => textures.forEach((t) => t.dispose()), [textures]);
 
   useFrame(({ clock }, delta) => {
     const t = clock.elapsedTime;
@@ -196,7 +209,7 @@ function Planets() {
     <>
       {PLANETS.map((p, i) => (
         <group key={p.name}>
-          <OrbitLine radius={p.orbit} />
+          <OrbitLine radius={p.orbit} light={light} />
           <group ref={(g) => void (refs.current[i].group = g)}>
             <group rotation={[0, 0, p.tilt]}>
               <mesh ref={(m) => void (spinners.current[i] = m)}>
@@ -217,7 +230,7 @@ function Planets() {
   );
 }
 
-function OrbitLine({ radius }: { radius: number }) {
+function OrbitLine({ radius, light }: { radius: number; light: boolean }) {
   const geometry = useMemo(() => {
     const points: number[] = [];
     for (let i = 0; i <= 256; i++) {
@@ -230,12 +243,12 @@ function OrbitLine({ radius }: { radius: number }) {
   }, [radius]);
   return (
     <lineLoop geometry={geometry}>
-      <lineBasicMaterial color="#8792a2" transparent opacity={0.22} />
+      <lineBasicMaterial color={light ? "#5b4a9e" : "#b4bfd8"} transparent opacity={light ? 0.38 : 0.5} />
     </lineLoop>
   );
 }
 
-function DustBelt() {
+function DustBelt({ light }: { light: boolean }) {
   const ref = useRef<Group>(null);
   const geometry = useMemo(() => {
     const count = 1400;
@@ -257,22 +270,29 @@ function DustBelt() {
   return (
     <group ref={ref}>
       <points geometry={geometry}>
-        <pointsMaterial color="#c9a58a" size={0.05} sizeAttenuation transparent opacity={0.55} depthWrite={false} />
+        <pointsMaterial color={light ? "#7d6aa8" : "#c9a58a"} size={0.05} sizeAttenuation transparent opacity={light ? 0.5 : 0.55} depthWrite={false} />
       </points>
     </group>
   );
 }
 
-function AlphaCentauri() {
-  const a = useMemo(() => glowTexture("rgba(255,250,235,1)", "rgba(255,230,170,0.35)"), []);
-  const b = useMemo(() => glowTexture("rgba(255,236,210,1)", "rgba(255,190,120,0.3)"), []);
+function AlphaCentauri({ light }: { light: boolean }) {
+  const a = useMemo(
+    () => (light ? glowTexture("rgba(255,176,64,1)", "rgba(255,170,70,0.3)") : glowTexture("rgba(255,250,235,1)", "rgba(255,230,170,0.35)")),
+    [light],
+  );
+  const b = useMemo(
+    () => (light ? glowTexture("rgba(240,130,60,1)", "rgba(240,130,60,0.28)") : glowTexture("rgba(255,236,210,1)", "rgba(255,190,120,0.3)")),
+    [light],
+  );
+  const blending = light ? NormalBlending : AdditiveBlending;
   return (
     <>
       <sprite position={ALPHA_A} scale={9}>
-        <spriteMaterial map={a} blending={AdditiveBlending} depthWrite={false} transparent />
+        <spriteMaterial map={a} blending={blending} depthWrite={false} transparent />
       </sprite>
       <sprite position={ALPHA_B} scale={6}>
-        <spriteMaterial map={b} blending={AdditiveBlending} depthWrite={false} transparent />
+        <spriteMaterial map={b} blending={blending} depthWrite={false} transparent />
       </sprite>
     </>
   );

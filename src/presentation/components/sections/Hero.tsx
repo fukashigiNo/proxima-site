@@ -41,7 +41,7 @@ export function Hero({ presetId }: { presetId?: string }) {
 
   return (
     <section ref={section} className="relative -mt-[var(--header-h)] h-[230vh] max-lg:h-[190vh]">
-      <div className="sticky top-0 h-dvh overflow-hidden pt-[var(--header-h)]">
+      <div className="sticky top-0 h-svh overflow-hidden pt-[var(--header-h)]">
         <Container className="grid h-full grid-cols-[minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)_auto] gap-x-12 gap-y-6 py-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:grid-rows-[minmax(0,1fr)_auto] lg:py-8">
           <div className="grid min-h-0 content-center gap-4">
             <p className="animate-rise text-[15px] text-muted max-lg:[@media(max-height:760px)]:hidden">

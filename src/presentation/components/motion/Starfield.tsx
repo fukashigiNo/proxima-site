@@ -25,7 +25,7 @@ interface Meteor {
 
 const COLORS = {
   dark: { cold: "190, 215, 255", white: "245, 248, 255", warm: "255, 214, 170" },
-  light: { cold: "40, 70, 120", white: "30, 40, 60", warm: "150, 80, 40" },
+  light: { cold: "45, 90, 170", white: "88, 64, 168", warm: "176, 92, 48" },
 };
 
 const random = (seed: number) => () => {
@@ -62,7 +62,9 @@ export function Starfield() {
       theme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
     };
 
-    const build = () => {
+    let starsWidth = -1;
+
+    const resizeCanvas = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = window.innerWidth;
       height = window.innerHeight;
@@ -73,16 +75,20 @@ export function Starfield() {
       cache.height = el.height;
       cacheCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       cacheScroll = Number.NaN;
+    };
 
+    const build = () => {
+      resizeCanvas();
+      if (width === starsWidth) return;
+      starsWidth = width;
       const rand = random(20251116);
-      const skyHeight = height * 2.2;
-      const count = Math.min(520, Math.round((width * skyHeight) / 3600));
+      const count = Math.min(520, Math.round((width * 1980) / 3600));
       stars = Array.from({ length: count }, () => {
         const depth = 0.15 + rand() ** 2 * 0.85;
         const roll = rand();
         return {
           x: rand(),
-          y: rand() * skyHeight,
+          y: rand(),
           r: 0.35 + depth * 1.15 * (0.6 + rand() * 0.6),
           alpha: 0.25 + depth * 0.6 * rand() + 0.15,
           depth,
@@ -94,21 +100,36 @@ export function Starfield() {
     };
 
     const plot = (target: CanvasRenderingContext2D, s: Star, scroll: number, twinkle: number) => {
+      const light = theme === "light";
+      if (light && s.r < 0.75) return;
       const span = height * 2.2;
-      let y = (s.y - scroll * s.depth * 0.25) % span;
+      let y = (s.y * span - scroll * s.depth * 0.25) % span;
       if (y < 0) y += span;
       if (y > height + 4) return;
+      const x = s.x * width;
       const color = COLORS[theme][s.hue];
-      const a = s.alpha * twinkle * (theme === "light" ? 0.45 : 1);
+      const a = light ? Math.min(0.85, s.alpha * 0.9 + 0.1) * twinkle : s.alpha * twinkle;
+      const r = light ? s.r * 0.95 : s.r;
       target.fillStyle = `rgba(${color}, ${a})`;
       target.beginPath();
-      target.arc(s.x * width, y, s.r, 0, Math.PI * 2);
+      target.arc(x, y, r, 0, Math.PI * 2);
       target.fill();
-      if (s.r > 1.25 && theme === "dark") {
-        target.fillStyle = `rgba(${color}, ${a * 0.12})`;
+      if (s.r > 1.2) {
+        target.fillStyle = `rgba(${color}, ${a * (light ? 0.14 : 0.12)})`;
         target.beginPath();
-        target.arc(s.x * width, y, s.r * 3.2, 0, Math.PI * 2);
+        target.arc(x, y, r * 3.2, 0, Math.PI * 2);
         target.fill();
+      }
+      if (light && s.r > 1.05) {
+        const len = r * 3.4;
+        target.strokeStyle = `rgba(${color}, ${a * 0.55})`;
+        target.lineWidth = 0.7;
+        target.beginPath();
+        target.moveTo(x - len, y);
+        target.lineTo(x + len, y);
+        target.moveTo(x, y - len);
+        target.lineTo(x, y + len);
+        target.stroke();
       }
     };
 
@@ -121,7 +142,7 @@ export function Starfield() {
       ctx.lineCap = "round";
       for (const s of stars) {
         const span = height * 2.2;
-        let y = (s.y - scroll * s.depth * 0.25) % span;
+        let y = (s.y * span - scroll * s.depth * 0.25) % span;
         if (y < 0) y += span;
         if (y > height + 4) continue;
         const x = s.x * width;
@@ -150,6 +171,7 @@ export function Starfield() {
     };
 
     const draw = (time: number) => {
+      if (!el.width || !el.height) return;
       if (warpStart >= 0) {
         const t = (time - warpStart) / WARP_MS;
         if (t < 1 || isWarping()) {
@@ -226,6 +248,7 @@ export function Starfield() {
     };
 
     const drawMeteors = (time: number) => {
+      if (theme === "light") return;
       if (time > nextMeteor) {
         const angle = Math.PI * (0.62 + Math.random() * 0.12);
         const speed = 9 + Math.random() * 5;
@@ -238,7 +261,7 @@ export function Starfield() {
         });
         nextMeteor = time + 6000 + Math.random() * 9000;
       }
-      const color = theme === "light" ? "30, 40, 60" : "255, 255, 255";
+      const color = "255, 255, 255";
       meteors = meteors.filter((m) => m.life > 0);
       for (const m of meteors) {
         m.x += m.vx;
@@ -256,10 +279,14 @@ export function Starfield() {
       }
     };
 
+    let lastScroll = -1;
     const loop = (time: number) => {
       frame = requestAnimationFrame(loop);
-      if (warpStart < 0 && arriveStart < 0 && time - last < 33) return;
+      const scroll = window.scrollY;
+      const scrolled = scroll !== lastScroll;
+      if (!scrolled && warpStart < 0 && arriveStart < 0 && time - last < 33) return;
       last = time;
+      lastScroll = scroll;
       draw(time);
     };
 

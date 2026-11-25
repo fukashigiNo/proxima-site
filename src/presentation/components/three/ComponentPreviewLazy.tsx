@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { SceneBoundary } from "./SceneBoundary";
 import type { ComponentProps } from "react";
 import { cn } from "@/presentation/lib/cn";
 import { useNearViewport } from "@/presentation/hooks/useNearViewport";
@@ -15,7 +16,13 @@ export function ComponentPreviewLazy({ className, ...props }: ComponentProps<typ
   const activated = useUserActivation();
   return (
     <div ref={ref} className={cn("relative", className)}>
-      {near && activated ? <ComponentPreview {...props} className="size-full" /> : <ScenePlaceholder />}
+      {near && activated ? (
+        <SceneBoundary fallback={<ScenePlaceholder />}>
+          <ComponentPreview {...props} className="size-full" />
+        </SceneBoundary>
+      ) : (
+        <ScenePlaceholder />
+      )}
     </div>
   );
 }

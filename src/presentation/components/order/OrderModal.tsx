@@ -47,7 +47,7 @@ export function OrderModalProvider({ children }: { children: ReactNode }) {
         ref={dialog}
         data-lenis-prevent=""
         aria-labelledby="order-modal-title"
-        className="order-dialog m-auto outline-none w-[min(520px,calc(100vw-24px))] max-w-none overflow-visible bg-transparent p-0 text-ink"
+        className="order-dialog m-auto max-h-[calc(100dvh-24px)] w-[min(520px,calc(100vw-24px))] max-w-none overflow-y-auto overscroll-contain bg-transparent p-0 text-ink outline-none"
         onClick={(event) => {
           if (event.target === event.currentTarget) dialog.current?.close();
         }}
@@ -117,7 +117,7 @@ function OrderModalContent({ draft, onClose }: { draft: OrderDraft; onClose: () 
   ];
 
   return (
-    <div className="order-panel relative grid gap-6 rounded-panel border border-line bg-surface p-6 shadow-float sm:p-8">
+    <div className="relative grid gap-6 rounded-panel border border-line bg-surface p-6 shadow-float sm:p-8">
       <button
         type="button"
         onClick={onClose}
