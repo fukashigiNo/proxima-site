@@ -4,6 +4,7 @@ import { SITE_URL } from "./siteUrl";
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages: { path: string; priority: number }[] = [
     { path: "", priority: 1 },
+    { path: "/catalog", priority: 0.9 },
     { path: "/builder", priority: 0.9 },
     { path: "/builds", priority: 0.9 },
     { path: "/process", priority: 0.6 },
