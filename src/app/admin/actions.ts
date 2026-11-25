@@ -83,6 +83,16 @@ export async function updateOffer(_: ActionState, form: FormData): Promise<Actio
   return { ok: true, message: "Сохранено" };
 }
 
+export async function setAvailability(_: ActionState, form: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const id = String(form.get("id") ?? "");
+  const available = form.get("available") === "1";
+  const failed = await run(() => container.admin.setAvailability.execute(id, available));
+  if (failed) return failed;
+  revalidatePath("/", "layout");
+  return { ok: true, message: available ? "В наличии" : "Снято с продажи" };
+}
+
 function revalidateCatalog() {
   revalidatePath("/", "layout");
 }

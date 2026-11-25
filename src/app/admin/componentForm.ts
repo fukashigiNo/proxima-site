@@ -30,6 +30,9 @@ export function componentFromForm(form: FormData): NewComponent {
     powerDraw: num(form, "powerDraw"),
     specs: parseSpecs(str(form, "specs")),
     stock: Object.fromEntries(CITIES.map((c) => [c, num(form, `stock.${c}`)])),
+    image: str(form, "image") || undefined,
+    imageCredit: str(form, "imageCredit") || undefined,
+    outOfStock: form.get("outOfStock") === "on" || undefined,
   };
 
   switch (category) {

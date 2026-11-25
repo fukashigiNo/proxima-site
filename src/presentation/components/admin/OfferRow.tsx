@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { startTransition, useActionState, useEffect, useState, type FormEvent } from "react";
-import { updateOffer, type ActionState } from "@/app/admin/actions";
-import { CITIES, CITY_LABELS, totalStock, type PcComponent } from "@/domain/entities/PcComponent";
+import { setAvailability, updateOffer, type ActionState } from "@/app/admin/actions";
+import { CITIES, CITY_LABELS, warehouseStock, type PcComponent } from "@/domain/entities/PcComponent";
 import { cn } from "@/presentation/lib/cn";
 
 const INPUT =
@@ -12,6 +12,15 @@ const INPUT =
 export function OfferRow({ component }: { component: PcComponent }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(updateOffer, {});
   const [dirty, setDirty] = useState(false);
+  const [availability, toggle, toggling] = useActionState<ActionState, FormData>(setAvailability, {});
+  const outOfStock = component.outOfStock === true;
+
+  const flip = () => {
+    const data = new FormData();
+    data.set("id", component.id);
+    data.set("available", outOfStock ? "1" : "0");
+    startTransition(() => toggle(data));
+  };
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -23,7 +32,7 @@ export function OfferRow({ component }: { component: PcComponent }) {
     if (state.ok) setDirty(false);
   }, [state]);
 
-  const stockTotal = totalStock(component);
+  const stockTotal = warehouseStock(component);
 
   return (
     <form
@@ -35,13 +44,39 @@ export function OfferRow({ component }: { component: PcComponent }) {
       )}
     >
       <input type="hidden" name="id" value={component.id} />
-      <div className="col-span-2 min-w-0 md:col-span-1">
-        <Link href={`/admin/catalog/${component.id}`} className="block truncate text-sm font-medium text-ink no-underline hover:text-accent">
-          <span className="font-normal text-muted">{component.brand}</span> {component.name}
-        </Link>
-        <p className={cn("text-xs", stockTotal === 0 ? "text-danger" : stockTotal < 3 ? "text-warning-ink" : "text-muted")}>
-          {stockTotal === 0 ? "нет в наличии" : `всего ${stockTotal} шт.`} · {component.id}
-        </p>
+      <div className="col-span-2 flex min-w-0 items-center gap-3 md:col-span-1">
+        <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg border border-line bg-surface-2">
+          {component.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={component.image} alt="" loading="lazy" referrerPolicy="no-referrer" className="size-full object-contain p-1" />
+          ) : (
+            <span className="text-[10px] text-muted">нет фото</span>
+          )}
+        </span>
+        <div className="min-w-0">
+          <Link href={`/admin/catalog/${component.id}`} className="block truncate text-sm font-medium text-ink no-underline hover:text-accent">
+            <span className="font-normal text-muted">{component.brand}</span> {component.name}
+          </Link>
+          <p className="flex flex-wrap items-center gap-x-2 text-xs">
+            <button
+              type="button"
+              onClick={flip}
+              disabled={toggling}
+              title={outOfStock ? "Вернуть в продажу" : "Отметить «нет в наличии»"}
+              className={cn(
+                "rounded-full px-2 py-0.5 font-medium transition-colors disabled:opacity-50",
+                outOfStock ? "bg-danger/12 text-danger hover:bg-danger/20" : "bg-success/12 text-success hover:bg-success/20",
+              )}
+            >
+              {toggling ? "…" : outOfStock ? "Нет в наличии" : "В наличии"}
+            </button>
+            <span className={cn(stockTotal === 0 ? "text-danger" : stockTotal < 3 ? "text-warning-ink" : "text-muted")}>
+              {stockTotal === 0 ? "остатков нет" : `на складах ${stockTotal} шт.`}
+            </span>
+            <span className="text-muted">· {component.id}</span>
+            {availability.message && !availability.ok && <span className="text-danger">{availability.message}</span>}
+          </p>
+        </div>
       </div>
       <label className="grid gap-1 md:block">
         <span className="text-[11px] text-muted md:sr-only">Цена, ₸</span>

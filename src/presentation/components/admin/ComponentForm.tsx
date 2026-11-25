@@ -40,6 +40,7 @@ export function ComponentForm({ component, defaultCategory = "cpu", usedInPreset
   const isEdit = Boolean(component);
   const [category, setCategory] = useState<ComponentCategory>(component?.category ?? defaultCategory);
   const [coolingKind, setCoolingKind] = useState(val(component, "kind", "air"));
+  const [image, setImage] = useState(String(val(component, "image")));
   const save = useFormAction(isEdit ? saveComponent : createComponent);
   const remove = useFormAction(deleteComponent, `Удалить «${component?.name}» из каталога? Это действие нельзя отменить.`);
   const e = save.state.fields ?? {};
@@ -84,7 +85,27 @@ export function ComponentForm({ component, defaultCategory = "cpu", usedInPreset
           </div>
         </FormSection>
 
+        <FormSection title="Фото">
+          <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_140px] sm:items-start">
+            <Field label="Ссылка на фото" error={e.image} hint="https://… — фото с сайта производителя или из своего хранилища">
+              <TextInput name="image" value={image} onChange={(ev) => setImage(ev.target.value)} invalid={Boolean(e.image)} placeholder="https://…" />
+            </Field>
+            <Field label="Автор и лицензия фото" error={e.imageCredit} hint="Обязательно для фото с Wikimedia и других CC-лицензий, показывается под фото" className="sm:col-start-1">
+              <TextInput name="imageCredit" defaultValue={val(c, "imageCredit")} invalid={Boolean(e.imageCredit)} placeholder="Фото: Автор, CC BY-SA 4.0, Wikimedia Commons" />
+            </Field>
+            <div className="grid aspect-square place-items-center overflow-hidden rounded-card border border-line bg-surface-2 text-xs text-muted">
+              {/^https:\/\/|^\//.test(image) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={image} alt="" className="size-full object-contain p-2" referrerPolicy="no-referrer" />
+              ) : (
+                "нет фото"
+              )}
+            </div>
+          </div>
+        </FormSection>
+
         <FormSection title="Наличие по городам">
+          <Check name="outOfStock" label="Нет в наличии — скрыть остатки и показывать «нет в наличии»" defaultChecked={read(c, "outOfStock") === true} />
           <div className="grid grid-cols-3 gap-4">
             {CITIES.map((city) => (
               <Field key={city} label={CITY_LABELS[city]} error={e[`stock.${city}`]}>
