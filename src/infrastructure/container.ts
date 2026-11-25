@@ -19,16 +19,36 @@ import { JsonFileStore, dataPath } from "./persistence/JsonFileStore";
 import { FileBuildRequestRepository } from "./repositories/FileBuildRequestRepository";
 import { FileComponentRepository } from "./repositories/FileComponentRepository";
 import { FilePresetRepository } from "./repositories/FilePresetRepository";
+import { ensureSchema, isPostgresEnabled } from "./persistence/postgres";
+import { PgBuildRequestRepository, PgComponentRepository, PgPresetRepository } from "./repositories/PgRepositories";
+import type { BuildRequestRepository } from "@/domain/repositories/BuildRequestRepository";
+import type { ComponentRepository } from "@/domain/repositories/ComponentRepository";
+import type { PresetRepository } from "@/domain/repositories/PresetRepository";
 
-const componentRepository = new FileComponentRepository(
-  new JsonFileStore<PcComponent[]>(dataPath("components.json"), () => [...COMPONENTS]),
-);
-const presetRepository = new FilePresetRepository(
-  new JsonFileStore<PresetBuild[]>(dataPath("presets.json"), () => [...PRESETS]),
-);
-const buildRequestRepository = new FileBuildRequestRepository(
-  new JsonFileStore<BuildRequest[]>(dataPath("requests.json"), () => []),
-);
+function createRepositories(): {
+  components: ComponentRepository;
+  presets: PresetRepository;
+  requests: BuildRequestRepository;
+} {
+  if (isPostgresEnabled()) {
+    const ready = () => ensureSchema({ components: () => [...COMPONENTS], presets: () => [...PRESETS] });
+    return {
+      components: new PgComponentRepository(ready),
+      presets: new PgPresetRepository(ready),
+      requests: new PgBuildRequestRepository(ready),
+    };
+  }
+  return {
+    components: new FileComponentRepository(new JsonFileStore<PcComponent[]>(dataPath("components.json"), () => [...COMPONENTS])),
+    presets: new FilePresetRepository(new JsonFileStore<PresetBuild[]>(dataPath("presets.json"), () => [...PRESETS])),
+    requests: new FileBuildRequestRepository(new JsonFileStore<BuildRequest[]>(dataPath("requests.json"), () => [])),
+  };
+}
+
+const repositories = createRepositories();
+const componentRepository = repositories.components;
+const presetRepository = repositories.presets;
+const buildRequestRepository = repositories.requests;
 const newRequestId = () => `PX-${randomUUID().slice(0, 8).toUpperCase()}`;
 const listBuildRequests = new ListBuildRequests(buildRequestRepository, componentRepository);
 
