@@ -10,7 +10,9 @@ export function OrderButton({
   variant = "primary",
   className,
   children = "Оформить заявку",
+  part,
 }: {
+  part?: boolean;
   selection: BuildSelection;
   title?: string | null;
   variant?: "primary" | "ghost";
@@ -19,7 +21,7 @@ export function OrderButton({
 }) {
   const openOrder = useOrderModal();
   const button = (
-    <button type="button" className={buttonClass(variant, className)} onClick={() => openOrder({ selection, title: title ?? null })}>
+    <button type="button" className={buttonClass(variant, className)} onClick={() => openOrder({ selection, title: title ?? null, part })}>
       {children}
     </button>
   );

@@ -8,13 +8,14 @@ import type { MessengerChannel } from "@/domain/entities/BuildRequest";
 import { CONTACTS, telegramLink, whatsappLink } from "@/presentation/content/contacts";
 import { cn } from "@/presentation/lib/cn";
 import { formatPrice } from "@/presentation/lib/format";
-import { buildOrderMessage } from "@/presentation/lib/orderMessage";
+import { buildOrderMessage, buildPartMessage } from "@/presentation/lib/orderMessage";
 import { reportMessengerOrder } from "@/presentation/lib/api";
 import { orderHref } from "@/presentation/lib/routes";
 
 interface OrderDraft {
   selection: BuildSelection;
   title: string | null;
+  part?: boolean;
 }
 
 const newReference = () => {
@@ -72,7 +73,10 @@ function OrderModalContent({ draft, onClose }: { draft: OrderDraft; onClose: () 
   const summary = useMemo(() => evaluateBuild(draft.selection), [draft.selection]);
   const parts = selectedComponents(draft.selection);
   const message = useMemo(
-    () => buildOrderMessage(draft.selection, draft.title, origin, reference || undefined),
+    () =>
+      draft.part
+        ? buildPartMessage(draft.selection, origin, reference || undefined)
+        : buildOrderMessage(draft.selection, draft.title, origin, reference || undefined),
     [draft, origin, reference],
   );
 
@@ -134,7 +138,9 @@ function OrderModalContent({ draft, onClose }: { draft: OrderDraft; onClose: () 
         <p className="text-sm text-muted">
           {reference && <span className="mr-2 font-mono text-accent-2">{reference}</span>}
           {parts.length > 0
-            ? `${draft.title ?? "Своя конфигурация"} · ${parts.length} поз. · ${formatPrice(summary.total)}`
+            ? draft.part
+              ? `${draft.title ?? parts.map((p) => p.name).join(", ")} · ${formatPrice(parts.reduce((sum, p) => sum + p.price, 0))}`
+              : `${draft.title ?? "Своя конфигурация"} · ${parts.length} поз. · ${formatPrice(summary.total)}`
             : "Опишите задачу — подберём конфигурацию"}
         </p>
       </div>

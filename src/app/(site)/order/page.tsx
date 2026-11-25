@@ -18,9 +18,10 @@ interface Props {
 
 export default async function OrderPage({ searchParams }: Props) {
   const { parts, title } = await searchParams;
-  const [selection, presets] = await Promise.all([
+  const [selection, presets, catalog] = await Promise.all([
     container.resolveBuild.execute(parseParts(parts)),
     container.getPresetBuilds.execute(),
+    container.getCatalog.execute(),
   ]);
 
   return (
@@ -35,7 +36,7 @@ export default async function OrderPage({ searchParams }: Props) {
           <RequestForm />
         </div>
         <div className="animate-rise [animation-delay:340ms]">
-          <OrderSummary presets={presets} />
+          <OrderSummary presets={presets} catalog={catalog} />
         </div>
       </Container>
     </BuildProvider>

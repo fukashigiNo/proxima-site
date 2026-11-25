@@ -19,6 +19,22 @@ const configLink = (origin: string, selection: BuildSelection) => {
   return ids.length ? `${origin}/builder?parts=${ids.join(",")}` : `${origin}/builder`;
 };
 
+export function buildPartMessage(selection: BuildSelection, origin: string, reference?: string) {
+  const parts = selectedComponents(selection);
+  const total = parts.reduce((sum, p) => sum + p.price, 0);
+  const text = [
+    "Здравствуйте! Хочу купить в Proxima Computers:",
+    "",
+    ...parts.map((p) => `- ${CATEGORY_LABELS[p.category]}: ${p.brand} ${p.name} - ${money(p.price)}`),
+    "",
+    `Итого: ${money(total)}`,
+    "",
+    ...(reference ? [`Код заявки: ${reference}`] : []),
+    ...parts.map((p) => `Ссылка: ${origin}/catalog/${p.id}`),
+  ];
+  return toMessengerText(text.join("\n"));
+}
+
 export function buildOrderMessage(selection: BuildSelection, title: string | null, origin: string, reference?: string) {
   const summary = evaluateBuild(selection);
   const lines = COMPONENT_CATEGORIES.flatMap((category) => {

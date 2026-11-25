@@ -1,17 +1,28 @@
 "use client";
 
-import Link from "next/link";
+import { useRef } from "react";
+import type { Catalog } from "@/application/use-cases/GetCatalog";
 import type { PresetBuildView } from "@/application/use-cases/GetPresetBuilds";
-import { CATEGORY_LABELS, COMPONENT_CATEGORIES } from "@/domain/entities/PcComponent";
+import { CATEGORY_LABELS, COMPONENT_CATEGORIES, type ComponentCategory } from "@/domain/entities/PcComponent";
 import { formatPrice, formatWatts } from "@/presentation/lib/format";
-import { builderHref } from "@/presentation/lib/routes";
 import { useBuild } from "@/presentation/state/BuildContext";
 import { BuildPicker } from "../order/BuildPicker";
-import { LinkButton } from "../ui/Button";
+import { PartPicker, type PartPickerHandle } from "../order/PartPicker";
+import { Button, LinkButton } from "../ui/Button";
 import { Label } from "../ui/Layout";
 
-export function OrderSummary({ presets = [] }: { presets?: readonly PresetBuildView[] }) {
-  const { selection, summary, presetTitle } = useBuild();
+export function OrderSummary({ presets = [], catalog }: { presets?: readonly PresetBuildView[]; catalog: Catalog }) {
+  const picker = useRef<PartPickerHandle>(null);
+  return (
+    <>
+      <SummaryCard presets={presets} onPick={(category) => picker.current?.open(category)} />
+      <PartPicker ref={picker} catalog={catalog} />
+    </>
+  );
+}
+
+function SummaryCard({ presets, onPick }: { presets: readonly PresetBuildView[]; onPick: (category?: ComponentCategory) => void }) {
+  const { selection, summary, presetTitle, reset } = useBuild();
   const hasParts = COMPONENT_CATEGORIES.some((c) => selection[c]);
 
   if (!hasParts) {
@@ -24,8 +35,7 @@ export function OrderSummary({ presets = [] }: { presets?: readonly PresetBuildV
         </p>
         <div className="flex flex-wrap gap-2">
           <BuildPicker presets={presets} />
-          <LinkButton href="/builds" variant="ghost">Готовые сборки</LinkButton>
-          <LinkButton href="/builder" variant="ghost">Конструктор</LinkButton>
+          <Button type="button" variant="ghost" onClick={() => onPick("cpu")}>Собрать здесь</Button>
         </div>
       </div>
     );
@@ -35,20 +45,27 @@ export function OrderSummary({ presets = [] }: { presets?: readonly PresetBuildV
     <div className="grid content-start gap-5 rounded-panel border border-line bg-surface/70 p-6 md:p-9">
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-[22px] font-medium tracking-[-0.02em]">{presetTitle ?? "Своя конфигурация"}</h2>
-        <Link href={builderHref({ selection })} className="whitespace-nowrap text-sm text-muted hover:text-ink">
-          Изменить →
-        </Link>
+        <button type="button" onClick={reset} className="whitespace-nowrap text-sm text-muted transition-colors hover:text-ink">
+          Изменить
+        </button>
       </div>
       <div className="-mt-2">
         <BuildPicker presets={presets} label="Выбрать другую сборку" />
       </div>
-      <dl className="grid gap-3 border-y border-line py-5 text-[15px]">
+      <dl className="grid gap-1 border-y border-line py-4 text-[15px]">
         {COMPONENT_CATEGORIES.map((category) => {
           const part = selection[category];
           return (
-            <div key={category} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-0.5">
-              <dt className="col-span-2 text-[13px] text-muted">{CATEGORY_LABELS[category]}</dt>
-              <dd className="truncate">{part ? `${part.brand} ${part.name}` : <span className="text-muted">не выбрано</span>}</dd>
+            <div key={category} className="group relative -mx-3 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-0.5 rounded-[10px] px-3 py-1.5 transition-colors hover:bg-surface-2">
+              <dt className="col-span-2 flex items-center justify-between text-[13px] text-muted">
+                <button type="button" onClick={() => onPick(category)} className="text-left after:absolute after:inset-0 after:content-['']">
+                  {CATEGORY_LABELS[category]}
+                </button>
+                <span className="text-[12px] opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100" aria-hidden>
+                  {part ? "заменить" : "выбрать"} →
+                </span>
+              </dt>
+              <dd className="truncate">{part ? `${part.brand} ${part.name}` : <span className="text-accent">выбрать</span>}</dd>
               <dd className="font-mono text-sm text-muted">{part ? formatPrice(part.price) : "—"}</dd>
             </div>
           );
