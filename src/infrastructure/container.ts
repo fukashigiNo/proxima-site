@@ -2,7 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { ChangeRequestStatus } from "@/application/use-cases/admin/ChangeRequestStatus";
 import { GetDashboard } from "@/application/use-cases/admin/GetDashboard";
-import { CreateComponent, DeleteComponent, UpdateComponent } from "@/application/use-cases/admin/ManageComponents";
+import { CreateComponent, DeleteComponent, SetAvailability, UpdateComponent } from "@/application/use-cases/admin/ManageComponents";
 import { DeletePreset, SavePreset } from "@/application/use-cases/admin/ManagePresets";
 import { ListBuildRequests } from "@/application/use-cases/admin/ListBuildRequests";
 import { UpdateOffer } from "@/application/use-cases/admin/UpdateOffer";
@@ -65,6 +65,7 @@ export const container = {
     createComponent: new CreateComponent(componentRepository),
     updateComponent: new UpdateComponent(componentRepository),
     deleteComponent: new DeleteComponent(componentRepository, presetRepository),
+    setAvailability: new SetAvailability(componentRepository),
     savePreset: new SavePreset(presetRepository, componentRepository),
     deletePreset: new DeletePreset(presetRepository),
     getDashboard: new GetDashboard(listBuildRequests, componentRepository),

@@ -33,6 +33,19 @@ export class UpdateComponent {
   }
 }
 
+export class SetAvailability {
+  constructor(private readonly components: ComponentRepository) {}
+
+  async execute(id: string, available: boolean): Promise<PcComponent> {
+    const [existing] = await this.components.findByIds([id]);
+    if (!existing) throw new DomainError("Позиция не найдена");
+    const { outOfStock: _, ...rest } = existing;
+    const component = (available ? rest : { ...rest, outOfStock: true }) as PcComponent;
+    await this.components.update(component);
+    return component;
+  }
+}
+
 export class DeleteComponent {
   constructor(
     private readonly components: ComponentRepository,

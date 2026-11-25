@@ -2,6 +2,7 @@ import { validateOfferPatch } from "./Offer";
 import {
   CITIES,
   COMPONENT_CATEGORIES,
+  IMAGE_URL_PATTERN,
   type City,
   type FormFactor,
   type MemoryType,
@@ -32,6 +33,11 @@ export function validateComponent(c: PcComponent): Errors {
   if (!oneOf(c.category, COMPONENT_CATEGORIES)) return { category: "Неизвестная категория" };
   text(errors, "brand", c.brand, "бренд", 40);
   text(errors, "name", c.name, "название");
+  if (c.image !== undefined && (typeof c.image !== "string" || c.image.length > 500 || !IMAGE_URL_PATTERN.test(c.image)))
+    errors.image = "Ссылка на фото: https://… или путь /images/…";
+  if (c.imageCredit !== undefined && (typeof c.imageCredit !== "string" || c.imageCredit.length > 200))
+    errors.imageCredit = "Подпись к фото — до 200 символов";
+  if (c.outOfStock !== undefined && typeof c.outOfStock !== "boolean") errors.outOfStock = "Некорректное значение";
   if (!inRange(c.powerDraw, 0, 1000)) errors.powerDraw = "Потребление — целое число от 0 до 1000 Вт";
 
   const stock = Object.fromEntries(CITIES.map((city) => [city, c.stock?.[city] ?? NaN])) as Record<City, number>;

@@ -35,6 +35,9 @@ interface BaseComponent<C extends ComponentCategory> {
   readonly powerDraw: number;
   readonly specs: Readonly<Record<string, string>>;
   readonly stock: Stock;
+  readonly image?: string;
+  readonly imageCredit?: string;
+  readonly outOfStock?: boolean;
 }
 
 export interface Cpu extends BaseComponent<"cpu"> {
@@ -96,8 +99,12 @@ export const CATEGORY_LABELS: Record<ComponentCategory, string> = {
   case: "Корпус",
 };
 
-export const totalStock = (component: PcComponent): number =>
+export const warehouseStock = (component: PcComponent): number =>
   Object.values(component.stock).reduce((sum, n) => sum + (n ?? 0), 0);
 
+export const totalStock = (component: PcComponent): number => (component.outOfStock ? 0 : warehouseStock(component));
+
 export const stockIn = (component: PcComponent, city: City | "all"): number =>
-  city === "all" ? totalStock(component) : (component.stock[city] ?? 0);
+  component.outOfStock ? 0 : city === "all" ? totalStock(component) : (component.stock[city] ?? 0);
+
+export const IMAGE_URL_PATTERN = /^(https:\/\/[^\s"'<>]+|\/[\w\-./]+)$/;
