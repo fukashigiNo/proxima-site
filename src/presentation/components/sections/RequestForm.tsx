@@ -1,18 +1,24 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { buildFormRequestMessage } from "@/presentation/lib/orderMessage";
 import { validateBuildRequest, type BuildRequestInput } from "@/domain/entities/BuildRequest";
 import { selectedComponents } from "@/domain/entities/Build";
 import { submitBuildRequest, type SubmitResult } from "@/presentation/lib/api";
 import { formatPrice } from "@/presentation/lib/format";
 import { useBuild } from "@/presentation/state/BuildContext";
+import { MessengerHandoff } from "../order/MessengerHandoff";
 import { Button } from "../ui/Button";
 
 const CARD = "grid gap-5 rounded-panel border border-line bg-surface/70 p-6 md:p-9";
 const INPUT =
   "w-full resize-y border-0 border-b border-line-strong bg-transparent py-2 text-base text-ink outline-none transition-colors placeholder:text-muted/70 focus:border-accent focus:shadow-[0_1px_0_0_var(--accent)] aria-invalid:border-danger";
 
-type Status = { kind: "idle" } | { kind: "sending" } | { kind: "done"; id: string } | { kind: "failed"; message: string };
+type Status =
+  | { kind: "idle" }
+  | { kind: "sending" }
+  | { kind: "done"; id: string; input: BuildRequestInput; withBuild: boolean }
+  | { kind: "failed"; message: string };
 
 export function RequestForm() {
   const { selection, summary, presetTitle } = useBuild();
@@ -30,6 +36,7 @@ export function RequestForm() {
       budget: budgetRaw ? Number(budgetRaw) : undefined,
       comment: String(data.get("comment") ?? "") || undefined,
       componentIds: data.get("attach") ? parts.map((p) => p.id) : [],
+      buildTitle: data.get("attach") && presetTitle ? presetTitle : undefined,
     };
 
     const clientErrors = validateBuildRequest(input);
@@ -38,7 +45,7 @@ export function RequestForm() {
 
     setStatus({ kind: "sending" });
     const result: SubmitResult = await submitBuildRequest(input);
-    if (result.ok) setStatus({ kind: "done", id: result.id });
+    if (result.ok) setStatus({ kind: "done", id: result.id, input, withBuild: input.componentIds.length > 0 });
     else if (result.fields) {
       setErrors(result.fields);
       setStatus({ kind: "idle" });
@@ -53,6 +60,14 @@ export function RequestForm() {
         </span>
         <h2 className="text-[26px] font-medium tracking-[-0.02em]">Заявка {status.id} принята</h2>
         <p className="text-muted">Мы получили заявку и скоро напишем, чтобы всё уточнить.</p>
+        <MessengerHandoff
+          message={buildFormRequestMessage(
+            { id: status.id, name: status.input.name.trim(), contact: status.input.contact.trim(), budget: status.input.budget, comment: status.input.comment?.trim() },
+            status.withBuild ? selection : {},
+            presetTitle,
+            typeof window === "undefined" ? "" : window.location.origin,
+          )}
+        />
         <Button variant="ghost" onClick={() => setStatus({ kind: "idle" })}>
           Отправить ещё одну
         </Button>

@@ -44,3 +44,28 @@ export function buildOrderMessage(selection: BuildSelection, title: string | nul
 
   return toMessengerText(text.join("\n"));
 }
+
+export function buildFormRequestMessage(
+  request: { id: string; name: string; contact: string; budget?: number; comment?: string },
+  selection: BuildSelection,
+  title: string | null,
+  origin: string,
+) {
+  const lines = COMPONENT_CATEGORIES.flatMap((category) => {
+    const part = selection[category];
+    return part ? [`- ${CATEGORY_LABELS[category]}: ${part.brand} ${part.name} - ${money(part.price)}`] : [];
+  });
+  const summary = evaluateBuild(selection);
+  const text = [
+    `Здравствуйте! Я оставил(а) заявку ${request.id} на сайте Proxima Computers.`,
+    "",
+    `Имя: ${request.name}`,
+    `Контакт: ${request.contact}`,
+    ...(request.budget ? [`Бюджет: ${money(request.budget)}`] : []),
+    ...(request.comment ? [`Задача: ${request.comment}`] : []),
+    ...(lines.length
+      ? ["", `Сборка${title ? ` "${title}"` : ""}:`, ...lines, `Итого: ${money(summary.total)}`, `Конфигурация: ${configLink(origin, selection)}`]
+      : []),
+  ];
+  return toMessengerText(text.join("\n"));
+}

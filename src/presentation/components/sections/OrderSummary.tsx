@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import type { PresetBuildView } from "@/application/use-cases/GetPresetBuilds";
 import { CATEGORY_LABELS, COMPONENT_CATEGORIES } from "@/domain/entities/PcComponent";
 import { formatPrice, formatWatts } from "@/presentation/lib/format";
 import { builderHref } from "@/presentation/lib/routes";
 import { useBuild } from "@/presentation/state/BuildContext";
+import { BuildPicker } from "../order/BuildPicker";
 import { LinkButton } from "../ui/Button";
 import { Label } from "../ui/Layout";
 
-export function OrderSummary() {
+export function OrderSummary({ presets = [] }: { presets?: readonly PresetBuildView[] }) {
   const { selection, summary, presetTitle } = useBuild();
   const hasParts = COMPONENT_CATEGORIES.some((c) => selection[c]);
 
@@ -21,6 +23,7 @@ export function OrderSummary() {
           приложится к заявке.
         </p>
         <div className="flex flex-wrap gap-2">
+          <BuildPicker presets={presets} />
           <LinkButton href="/builds" variant="ghost">Готовые сборки</LinkButton>
           <LinkButton href="/builder" variant="ghost">Конструктор</LinkButton>
         </div>
@@ -35,6 +38,9 @@ export function OrderSummary() {
         <Link href={builderHref({ selection })} className="whitespace-nowrap text-sm text-muted hover:text-ink">
           Изменить →
         </Link>
+      </div>
+      <div className="-mt-2">
+        <BuildPicker presets={presets} label="Выбрать другую сборку" />
       </div>
       <dl className="grid gap-3 border-y border-line py-5 text-[15px]">
         {COMPONENT_CATEGORIES.map((category) => {
