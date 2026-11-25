@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
   transpilePackages: ["three"],
   poweredByHeader: false,
+  serverExternalPackages: ["pg"],
   // Метаданные у нас статичные — выводим их в <head> для всех, а не «потоком» в конце страницы
   // (иначе описание /order и /builder не видят часть сканеров и превью мессенджеров)
   htmlLimitedBots: /.*/,
