@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "db:migrate": "node --env-file=.env.local scripts/migrate-db.mjs"
+    "db:migrate": "node --env-file=.env.local scripts/migrate-db.mjs",
+    "db:seed": "jiti scripts/seed-catalog.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
