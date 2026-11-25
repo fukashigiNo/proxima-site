@@ -113,6 +113,15 @@ NEXT_PUBLIC_TELEGRAM_USERNAME=proxima    # без @
 заменяются (`toMessengerText`), потому что WhatsApp на части клиентов показывал их «битыми». Для WhatsApp используется
 прямая ссылка `api.whatsapp.com/send` вместо редиректа `wa.me`.
 
+## База данных
+
+Заявки, каталог и готовые сборки хранятся в PostgreSQL, если задана переменная `DATABASE_URL`, иначе — в JSON-файлах в `data/`.
+
+- **Локально:** `createdb proxima`, затем в `.env.local` — `DATABASE_URL=postgresql://<пользователь>@localhost:5432/proxima`.
+- **Vercel:** подключите облачный Postgres (Neon через Storage → Marketplace или любой другой) и добавьте его строку подключения в `DATABASE_URL` (обычно с `?sslmode=require`).
+- Таблицы `components`, `presets`, `requests` создаются автоматически при первом запросе. Пустая база заполняется из `data/*.json`, если файлы есть, иначе из `src/infrastructure/data/catalog.ts`.
+- Код: `src/infrastructure/persistence/postgres.ts`, `src/infrastructure/repositories/PgRepositories.ts`.
+
 ## Как наполнить сайт настоящим контентом
 
 Всё, что делает сайт «живым», лежит в трёх файлах в `src/presentation/content/`:
