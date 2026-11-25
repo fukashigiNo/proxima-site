@@ -4,6 +4,7 @@ export interface BuildRequestInput {
   readonly budget?: number;
   readonly comment?: string;
   readonly componentIds: readonly string[];
+  readonly buildTitle?: string;
 }
 
 export const REQUEST_CHANNELS = ["site", "telegram", "whatsapp"] as const;
@@ -42,7 +43,6 @@ export interface BuildRequest extends BuildRequestInput {
   readonly status: RequestStatus;
   readonly updatedAt?: string;
   readonly channel?: RequestChannel;
-  readonly buildTitle?: string;
 }
 
 export const channelOf = (request: BuildRequest): RequestChannel => request.channel ?? "site";
@@ -85,11 +85,17 @@ const CONTACT_PATTERN = /^(\+?[\d\s()-]{10,18}|[^\s@]+@[^\s@]+\.[^\s@]+|@[\w]{4,
 
 export const validateBuildRequest = (input: Partial<BuildRequestInput>): Record<string, string> => {
   const errors: Record<string, string> = {};
-  if (!input.name || input.name.trim().length < 2) errors.name = "Укажите имя";
-  if (!input.contact || !CONTACT_PATTERN.test(input.contact.trim()))
-    errors.contact = "Телефон, e‑mail или Telegram";
-  if (input.budget !== undefined && (Number.isNaN(input.budget) || input.budget < 0))
+  const name = typeof input.name === "string" ? input.name.trim() : "";
+  const contact = typeof input.contact === "string" ? input.contact.trim() : "";
+  if (name.length < 2 || name.length > 100) errors.name = "Укажите имя";
+  if (!contact || contact.length > 100 || !CONTACT_PATTERN.test(contact)) errors.contact = "Телефон, e‑mail или Telegram";
+  if (input.budget !== undefined && (typeof input.budget !== "number" || !Number.isFinite(input.budget) || input.budget < 0 || input.budget > 1e9))
     errors.budget = "Некорректный бюджет";
-  if (input.comment && input.comment.length > 1000) errors.comment = "Не более 1000 символов";
+  if (input.comment !== undefined && (typeof input.comment !== "string" || input.comment.length > 1000))
+    errors.comment = "Не более 1000 символов";
+  if (input.componentIds !== undefined && (!Array.isArray(input.componentIds) || input.componentIds.length > 16 || input.componentIds.some((id) => typeof id !== "string")))
+    errors.componentIds = "Некорректная конфигурация";
+  if (input.buildTitle !== undefined && (typeof input.buildTitle !== "string" || input.buildTitle.length > 80))
+    errors.buildTitle = "Некорректное название сборки";
   return errors;
 };

@@ -31,6 +31,7 @@ export class SubmitBuildRequest {
       budget: input.budget,
       comment: input.comment?.trim() || undefined,
       componentIds: known.map((c) => c.id),
+      buildTitle: known.length ? input.buildTitle?.trim() || undefined : undefined,
     };
     await this.requests.save(request);
     return request;
