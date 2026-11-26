@@ -9,7 +9,9 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "db:migrate": "node --env-file=.env.local scripts/migrate-db.mjs",
-    "db:seed": "jiti scripts/seed-catalog.ts"
+    "db:seed": "node scripts/run-ts.mjs scripts/seed-catalog.ts",
+    "bot:dev": "node scripts/run-ts.mjs scripts/bot-dev.ts",
+    "bot:webhook": "node scripts/run-ts.mjs scripts/bot-webhook.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
@@ -21,6 +23,7 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "server-only": "^0.0.1",
+    "telegraf": "^4.16.3",
     "three": "^0.187.0"
   },
   "devDependencies": {
@@ -30,6 +33,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.187.0",
+    "jiti": "^2.7.0",
     "postcss": "^8.5.33",
     "tailwindcss": "^4.3.5",
     "typescript": "^5.9.3"
