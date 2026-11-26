@@ -9,6 +9,7 @@ import { ProductPhoto } from "@/presentation/components/catalog/ProductPhoto";
 import { OrderButton } from "@/presentation/components/order/OrderButton";
 import { LinkButton } from "@/presentation/components/ui/Button";
 import { Container } from "@/presentation/components/ui/Layout";
+import { CONTACTS, botLink } from "@/presentation/content/contacts";
 import { technicalDetails } from "@/presentation/lib/componentDetails";
 import { formatPrice } from "@/presentation/lib/format";
 import { builderHref } from "@/presentation/lib/routes";
@@ -102,6 +103,16 @@ export default async function ProductPage({ params }: Props) {
                   <LinkButton href={builderHref({ selection, focus: item.category })} variant="ghost">
                     Собрать ПК с ним
                   </LinkButton>
+                  {CONTACTS.bot && !item.outOfStock && (
+                    <a
+                      href={botLink(CONTACTS.bot, `i_${item.id}`)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-12 items-center rounded-full border border-[#2aabee]/50 px-6 text-[15px] font-medium text-[#2aabee] no-underline transition-colors hover:bg-[#2aabee]/10"
+                    >
+                      Купить в Telegram
+                    </a>
+                  )}
                 </div>
               </div>
 
