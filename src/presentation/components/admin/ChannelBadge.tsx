@@ -5,6 +5,7 @@ const TONES: Record<RequestChannel, string> = {
   site: "border-line-strong text-muted",
   telegram: "border-[#2aabee]/40 text-[#2aabee]",
   whatsapp: "border-[#25d366]/40 text-[#1fa855]",
+  telegram_bot: "border-[#2aabee] bg-[#2aabee]/10 text-[#2aabee]",
 };
 
 export function ChannelBadge({ request }: { request: BuildRequest }) {

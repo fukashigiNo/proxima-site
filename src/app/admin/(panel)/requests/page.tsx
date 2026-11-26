@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { REQUEST_CHANNEL_LABELS, REQUEST_STATUSES, REQUEST_STATUS_LABELS, channelOf, type RequestStatus } from "@/domain/entities/BuildRequest";
+import { REQUEST_CHANNEL_LABELS, REQUEST_STATUSES, REQUEST_STATUS_LABELS, channelOf, telegramProfileLink, type RequestStatus } from "@/domain/entities/BuildRequest";
 import { CATEGORY_LABELS } from "@/domain/entities/PcComponent";
 import { container } from "@/infrastructure/container";
 import { ChannelBadge, requestTitle } from "@/presentation/components/admin/ChannelBadge";
@@ -67,7 +67,9 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
                   {r.contact ? (
                     <div>
                       <dt className="text-xs text-muted">Контакт</dt>
-                      <dd className="select-all">{r.contact}</dd>
+                      <dd className="select-all">
+                        <ContactValue contact={r.contact} />
+                      </dd>
                     </div>
                   ) : (
                     <div>
@@ -76,6 +78,22 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
                         Клиент перешёл в {REQUEST_CHANNEL_LABELS[channelOf(r)]}. Найдите в чате сообщение с кодом{" "}
                         <span className="select-all font-mono font-medium">{r.id}</span>.
                         <span className="mt-1 block text-xs text-muted">Если сообщения нет — клиент передумал отправлять.</span>
+                      </dd>
+                    </div>
+                  )}
+                  {r.telegram && (
+                    <div>
+                      <dt className="text-xs text-muted">Telegram</dt>
+                      <dd>
+                        {r.telegram.username ? (
+                          <a href={telegramProfileLink(r.telegram.username)} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                            @{r.telegram.username}
+                          </a>
+                        ) : (
+                          <span>username скрыт</span>
+                        )}
+                        {r.telegram.name && <span className="text-muted"> · {r.telegram.name}</span>}
+                        <span className="block text-xs text-muted">ID {r.telegram.id}</span>
                       </dd>
                     </div>
                   )}
@@ -147,4 +165,27 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
       )}
     </>
   );
+}
+
+function ContactValue({ contact }: { contact: string }) {
+  if (/^https:\/\/t\.me\/[A-Za-z0-9_]+$/.test(contact))
+    return (
+      <a href={contact} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+        {contact.replace("https://", "")}
+      </a>
+    );
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact))
+    return (
+      <a href={`mailto:${contact}`} className="text-accent hover:underline">
+        {contact}
+      </a>
+    );
+  const digits = contact.replace(/[^\d+]/g, "");
+  if (/^\+?\d{10,15}$/.test(digits))
+    return (
+      <a href={`tel:${digits.startsWith("+") ? digits : `+${digits}`}`} className="text-accent hover:underline">
+        {contact}
+      </a>
+    );
+  return <>{contact}</>;
 }
