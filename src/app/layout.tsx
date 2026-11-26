@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Proxima Computers — сборка компьютеров на заказ",
     description: "Соберите ПК из комплектующих в наличии в Казахстане: цены в тенге, 3D-модель и проверка совместимости.",
   },
-  twitter: { card: "summary" },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
