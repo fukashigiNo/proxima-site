@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { BUSINESS } from "@/presentation/content/business";
 import { CONTACTS } from "@/presentation/content/contacts";
-import { Logo } from "../brand/Logo";
+import { Logo, SLOGAN } from "../brand/Logo";
 import { Container } from "../ui/Layout";
 import { SITE_NAV } from "./nav";
 
@@ -19,9 +19,10 @@ export function Footer() {
     <footer className="border-t border-line pb-10 pt-14 text-[15px]">
       <Container className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_auto]">
         <div className="grid content-start gap-3">
-          <Link href="/" className="w-fit" aria-label="PRX comp — Proxima Computers, на главную">
-            <Logo className="h-12" />
+          <Link href="/" className="w-fit" aria-label="Proxima Computers, на главную">
+            <Logo className="text-[26px]" />
           </Link>
+          <p className="text-[17px] tracking-[-0.01em] text-muted">{SLOGAN}</p>
           <p className="max-w-[320px] text-muted">
             Собираем и настраиваем компьютеры в {BUSINESS.baseCity}. Доставляем {BUSINESS.delivery}.
           </p>

@@ -13,7 +13,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <div className="grid w-full max-w-sm gap-6 rounded-panel border border-line bg-bg p-8">
         <div className="grid gap-2">
           <p className="flex items-center gap-2 text-[17px] font-semibold tracking-[-0.02em]">
-            <Logo className="h-8" title="PRX comp" /> Admin
+            <Logo className="text-[18px]" /> Admin
           </p>
           <p className="text-sm text-muted">Управление заявками и каталогом</p>
         </div>

@@ -19,7 +19,7 @@ export function ProximaBeacon() {
     const header = document.querySelector("header");
 
     const measureSlot = () => {
-      const logo = header?.querySelector<HTMLElement>('a[aria-label^="PRX"]');
+      const logo = header?.querySelector<HTMLElement>("a[data-logo]");
       const row = logo?.parentElement;
       if (!logo || !row) return setProximaSlot(null);
       const next = [...row.children].find(

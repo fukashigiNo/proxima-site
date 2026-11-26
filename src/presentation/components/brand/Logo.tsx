@@ -1,23 +1,23 @@
 import { cn } from "@/presentation/lib/cn";
 
-export function Logo({ className, title = "PRX comp — Proxima Computers" }: { className?: string; title?: string }) {
+export const STAR_PATH =
+  "M50 2C56.24 40.64 59.36 43.76 98 50C59.36 56.24 56.24 59.36 50 98C43.76 59.36 40.64 56.24 2 50C40.64 43.76 43.76 40.64 50 2Z";
+
+export const SLOGAN = "Ближе к звёздам.";
+
+export function StarMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="129 180 765 617" className={cn("logo h-10 w-auto", className)} role="img" aria-label={title}>
-      <path className="logo-folder" fill="#252e38" d="M159 180H402Q410 180 415 186L466 242Q471 248 479 248H864A30 30 0 0 1 894 278V767A30 30 0 0 1 864 797H159A30 30 0 0 1 129 767V210A30 30 0 0 1 159 180Z" />
-      <path className="logo-bookmark" fill="var(--bg)" d="M214 180H318V300L266 268L214 300Z" />
-      <path className="logo-prx" fill="#fff" fillRule="evenodd" d="M226 402H373L393 422V514L371 536H264V598H226Z M264 439V498H354V439Z M424 402H570L590 422V508L564 536L590 571V598H552L520 537H462V598H424Z M462 439V494H552V439Z M619 402H659V426L708 478L757 426V402H797V426L737 500L797 573V598H758V575L708 524L658 575V598H618V573L679 500L619 426Z" />
-      <text
-        className="logo-comp"
-        x="433"
-        y="731"
-        fill="#a6a6a6"
-        fontFamily="var(--font-sans)"
-        fontSize="143"
-        textLength="369"
-        lengthAdjust="spacingAndGlyphs"
-      >
-        comp
-      </text>
+    <svg viewBox="0 0 100 100" className={cn("logo-star size-[1em] shrink-0 fill-current", className)} aria-hidden="true">
+      <path d={STAR_PATH} />
     </svg>
+  );
+}
+
+export function Logo({ className, title = "Proxima" }: { className?: string; title?: string }) {
+  return (
+    <span className={cn("logo inline-flex items-center gap-[0.4em] text-[22px] leading-none font-medium tracking-[-0.025em] text-ink", className)} role="img" aria-label={title}>
+      <StarMark className="size-[0.95em]" />
+      <span aria-hidden="true">Proxima</span>
+    </span>
   );
 }

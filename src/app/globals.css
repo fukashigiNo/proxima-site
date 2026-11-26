@@ -161,19 +161,11 @@
   }
 }
 
-.logo .logo-bookmark,
-.logo .logo-prx,
-.logo .logo-comp {
-  transition: transform 0.45s var(--ease-out-soft);
+.logo .logo-star {
+  transition: transform 0.6s var(--ease-out-soft);
 }
-:where(a, button):hover > .logo .logo-bookmark {
-  transform: translateY(26px);
-}
-:where(a, button):hover > .logo .logo-prx {
-  transform: translateX(10px);
-}
-:where(a, button):hover > .logo .logo-comp {
-  transform: translateX(-10px);
+:where(a, button):hover > .logo .logo-star {
+  transform: rotate(90deg);
 }
 
 :root {

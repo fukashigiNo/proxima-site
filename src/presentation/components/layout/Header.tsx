@@ -9,8 +9,8 @@ export function Header() {
   return (
     <HeaderShell className="group/header fixed inset-x-0 top-0 z-50 bg-transparent transition-transform duration-500 ease-out-soft data-[hidden]:-translate-y-full has-[:focus-visible]:translate-y-0">
       <Container className="flex h-[68px] items-center justify-between gap-6 transition-[height] duration-300 group-data-[scrolled]/header:h-[58px]">
-        <Link href="/" className="group flex shrink-0 items-center no-underline" aria-label="PRX comp — Proxima Computers, на главную">
-          <Logo className="h-11 transition-[height] duration-300 group-data-[scrolled]/header:h-9" />
+        <Link href="/" className="group flex shrink-0 items-center no-underline" data-logo aria-label="Proxima Computers, на главную">
+          <Logo className="text-[23px] transition-[font-size] duration-300 group-data-[scrolled]/header:text-[20px]" />
         </Link>
         <NavLinks className="hidden gap-8 min-[961px]:flex" />
         <div className="flex items-center gap-2.5">

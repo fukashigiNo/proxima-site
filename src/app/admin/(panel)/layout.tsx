@@ -20,7 +20,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <aside className="sticky top-0 z-10 flex flex-col gap-4 border-b border-line bg-bg p-4 md:h-dvh md:border-b-0 md:border-r md:p-5">
         <div className="flex items-center justify-between gap-2">
           <Link href="/admin" className="flex items-center gap-2 text-[15px] font-semibold tracking-[-0.02em] text-ink no-underline">
-            <Logo className="h-8" title="PRX comp" /> Admin
+            <Logo className="text-[18px]" /> Admin
           </Link>
           <div className="md:hidden">
             <ThemeToggle />
