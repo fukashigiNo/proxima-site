@@ -11,6 +11,7 @@ import { GetPresetBuilds } from "@/application/use-cases/GetPresetBuilds";
 import { ResolveBuild } from "@/application/use-cases/ResolveBuild";
 import { SubmitBuildRequest } from "@/application/use-cases/SubmitBuildRequest";
 import { SubmitMessengerRequest } from "@/application/use-cases/SubmitMessengerRequest";
+import { SubmitTelegramRequest } from "@/application/use-cases/SubmitTelegramRequest";
 import type { PresetBuild } from "@/domain/entities/Build";
 import type { BuildRequest } from "@/domain/entities/BuildRequest";
 import type { PcComponent } from "@/domain/entities/PcComponent";
@@ -20,7 +21,9 @@ import { FileBuildRequestRepository } from "./repositories/FileBuildRequestRepos
 import { FileComponentRepository } from "./repositories/FileComponentRepository";
 import { FilePresetRepository } from "./repositories/FilePresetRepository";
 import { ensureSchema, isPostgresEnabled } from "./persistence/postgres";
-import { PgBuildRequestRepository, PgComponentRepository, PgPresetRepository } from "./repositories/PgRepositories";
+import { PgBotSessionRepository, PgBuildRequestRepository, PgComponentRepository, PgPresetRepository } from "./repositories/PgRepositories";
+import { FileBotSessionRepository } from "./repositories/FileBotSessionRepository";
+import type { BotSessionRepository } from "@/domain/repositories/BotSessionRepository";
 import type { BuildRequestRepository } from "@/domain/repositories/BuildRequestRepository";
 import type { ComponentRepository } from "@/domain/repositories/ComponentRepository";
 import type { PresetRepository } from "@/domain/repositories/PresetRepository";
@@ -29,6 +32,7 @@ function createRepositories(): {
   components: ComponentRepository;
   presets: PresetRepository;
   requests: BuildRequestRepository;
+  botSessions: BotSessionRepository;
 } {
   if (isPostgresEnabled()) {
     const ready = () => ensureSchema({ components: () => [...COMPONENTS], presets: () => [...PRESETS] });
@@ -36,12 +40,14 @@ function createRepositories(): {
       components: new PgComponentRepository(ready),
       presets: new PgPresetRepository(ready),
       requests: new PgBuildRequestRepository(ready),
+      botSessions: new PgBotSessionRepository(ready),
     };
   }
   return {
     components: new FileComponentRepository(new JsonFileStore<PcComponent[]>(dataPath("components.json"), () => [...COMPONENTS])),
     presets: new FilePresetRepository(new JsonFileStore<PresetBuild[]>(dataPath("presets.json"), () => [...PRESETS])),
     requests: new FileBuildRequestRepository(new JsonFileStore<BuildRequest[]>(dataPath("requests.json"), () => [])),
+    botSessions: new FileBotSessionRepository(new JsonFileStore<Record<string, unknown>>(dataPath("bot-sessions.json"), () => ({}))),
   };
 }
 
@@ -58,6 +64,8 @@ export const container = {
   resolveBuild: new ResolveBuild(componentRepository),
   submitBuildRequest: new SubmitBuildRequest(buildRequestRepository, componentRepository, newRequestId),
   submitMessengerRequest: new SubmitMessengerRequest(buildRequestRepository, componentRepository, newRequestId),
+  submitTelegramRequest: new SubmitTelegramRequest(buildRequestRepository, componentRepository, newRequestId),
+  botSessions: repositories.botSessions,
   admin: {
     listBuildRequests,
     changeRequestStatus: new ChangeRequestStatus(buildRequestRepository),

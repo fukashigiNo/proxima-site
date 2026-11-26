@@ -63,6 +63,12 @@ export function ensureSchema(seed: { components: () => PcComponent[]; presets: (
           created_at timestamptz NOT NULL DEFAULT now()
         );
         CREATE INDEX IF NOT EXISTS requests_created_at_idx ON requests (created_at DESC);
+        CREATE TABLE IF NOT EXISTS bot_sessions (
+          key text PRIMARY KEY,
+          data jsonb NOT NULL,
+          updated_at timestamptz NOT NULL DEFAULT now()
+        );
+        ALTER TABLE bot_sessions ENABLE ROW LEVEL SECURITY;
         ALTER TABLE components ENABLE ROW LEVEL SECURITY;
         ALTER TABLE presets ENABLE ROW LEVEL SECURITY;
         ALTER TABLE requests ENABLE ROW LEVEL SECURITY;

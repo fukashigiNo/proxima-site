@@ -2,6 +2,7 @@ import "server-only";
 import type { PresetBuild } from "@/domain/entities/Build";
 import type { BuildRequest } from "@/domain/entities/BuildRequest";
 import type { PcComponent } from "@/domain/entities/PcComponent";
+import type { BotSessionRepository } from "@/domain/repositories/BotSessionRepository";
 import type { BuildRequestRepository } from "@/domain/repositories/BuildRequestRepository";
 import type { ComponentRepository } from "@/domain/repositories/ComponentRepository";
 import type { PresetRepository } from "@/domain/repositories/PresetRepository";
@@ -80,5 +81,26 @@ export class PgBuildRequestRepository implements BuildRequestRepository {
       "INSERT INTO requests (id, data, created_at) VALUES ($1, $2, $3) ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data",
       [request.id, request, request.createdAt],
     );
+  }
+}
+
+export class PgBotSessionRepository implements BotSessionRepository {
+  constructor(private readonly ready: Ready) {}
+
+  async get(key: string) {
+    const [data] = await query<unknown>(this.ready, "SELECT data FROM bot_sessions WHERE key = $1", [key]);
+    return data ?? undefined;
+  }
+
+  async set(key: string, data: unknown) {
+    await query(
+      this.ready,
+      "INSERT INTO bot_sessions (key, data, updated_at) VALUES ($1, $2, now()) ON CONFLICT (key) DO UPDATE SET data = EXCLUDED.data, updated_at = now()",
+      [key, JSON.stringify(data)],
+    );
+  }
+
+  async delete(key: string) {
+    await query(this.ready, "DELETE FROM bot_sessions WHERE key = $1", [key]);
   }
 }

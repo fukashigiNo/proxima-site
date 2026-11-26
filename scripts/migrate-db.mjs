@@ -31,6 +31,8 @@ const SCHEMA = `
   ALTER TABLE components ENABLE ROW LEVEL SECURITY;
   ALTER TABLE presets ENABLE ROW LEVEL SECURITY;
   ALTER TABLE requests ENABLE ROW LEVEL SECURITY;
+  CREATE TABLE IF NOT EXISTS bot_sessions (key text PRIMARY KEY, data jsonb NOT NULL, updated_at timestamptz NOT NULL DEFAULT now());
+  ALTER TABLE bot_sessions ENABLE ROW LEVEL SECURITY;
 `;
 
 const from = new pg.Client(config(source));
